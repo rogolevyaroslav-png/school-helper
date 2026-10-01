@@ -1,0 +1,38 @@
+name: Update Grades
+
+on:
+  schedule:
+    # Запускать каждый день в 3:00 по UTC (6:00 по Иркутску)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Позволяет запускать вручную из вкладки Actions
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install selenium pandas webdriver-manager
+
+      - name: Run scraper
+        env:
+          DNEVNIK_LOGIN: ${{ secrets.DNEVNIK_LOGIN }}
+          DNEVNIK_PASSWORD: ${{ secrets.DNEVNIK_PASSWORD }}
+        run: python scraper.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add grades.csv
+          git diff --staged --quiet || git commit -m "Обновление оценок"
+          git push
