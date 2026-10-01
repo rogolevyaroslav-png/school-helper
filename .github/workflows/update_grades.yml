@@ -5,6 +5,9 @@ on:
     # Запускать каждый день в 3:00 по UTC (6:00 по Иркутску)
     - cron: '0 3 * * *'
   workflow_dispatch: # Позволяет запускать вручную из вкладки Actions
+  
+  permissions:
+   contents: write
 
 jobs:
   update:
