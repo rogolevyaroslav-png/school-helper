@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # Позволяет запускать вручную из вкладки Actions
   
   permissions:
-   contents: write
+    contents: write
 
 jobs:
   update:
