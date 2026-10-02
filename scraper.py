@@ -1,36 +1,13 @@
 # scraper.py
-# Парсер оценок из Сетевого Город (drzd.ru)
-# Версия 3: с выбором региона, города и школы
+# Парсер оценок из Сетевого Город (drzd.ru) — финальная версия
 
 import os
 import time
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-URL = "http://drzd.ru/"
-
-# !!! ПРОВЕРЬ НАЗВАНИЯ — они должны ТОЧНО совпадать с текстом в списках !!!
-REGION = "Иркутская обл"
-MUNICIPALITY = "Городской округ Иркутск"
-LOCALITY = "Иркутск, г."
-SCHOOL = "РЖД лицей № 14"
-
-
-def select_by_text(driver, element_id, text, wait_time=5):
-    """Выбирает значение в выпадающем списке <select> по видимому тексту."""
-    time.sleep(wait_time)  # ждём загрузки опций
-    select_elem = Select(driver.find_element(By.ID, element_id))
-    for option in select_elem.options:
-        if text.lower() in option.text.lower():
-            select_elem.select_by_visible_text(option.text)
-            print(f"✅ Выбрано в #{element_id}: {option.text}")
-            return True
-    print(f"⚠️ Не найдено '{text}' в #{element_id}")
-    print(f"   Доступные опции: {[o.text for o in select_elem.options][:10]}")
-    return False
 
 
 def main():
@@ -38,7 +15,7 @@ def main():
     password = os.environ.get("DNEVNIK_PASSWORD")
 
     if not login or not password:
-        print("❌ Ошибка: логин или пароль не найдены в секретах.")
+        print("❌ Ошибка: логин или пароль не найдены.")
         return
 
     print("Настраиваем браузер...")
@@ -55,126 +32,79 @@ def main():
     try:
         # 1. Открываем сайт
         print("Открываем сайт...")
-        driver.get(URL)
+        driver.get("http://drzd.ru/")
         time.sleep(5)
 
-        # 2. Выбираем РЕГИОН
-        print("\n--- Выбираем регион ---")
-        select_by_text(driver, "countries", "Россия", wait_time=2)
-        select_by_text(driver, "states", REGION, wait_time=3)
-
-        # 3. Выбираем МУНИЦИПАЛЬНЫЙ РАЙОН
-        print("\n--- Выбираем городской округ ---")
-        select_by_text(driver, "provinces", MUNICIPALITY, wait_time=5)
-
-        # 4. Выбираем НАСЕЛЁННЫЙ ПУНКТ (если есть)
-        print("\n--- Выбираем населённый пункт ---")
-        try:
-            select_by_text(driver, "cities", LOCALITY, wait_time=5)
-        except Exception as e:
-            print(f"⚠️ Поле 'cities' не найдено: {e}")
-
-        # 5. Сохраняем HTML после выбора региона
-        with open("debug_after_region.html", "w", encoding="utf-8") as f:
-            f.write(driver.page_source)
-        print("💾 Сохранён debug_after_region.html")
-
-        # 6. Ищем поле организации (может быть select или input)
-        print("\n--- Ищем поле организации ---")
-        school_selected = False
-        
-        # Пробуем как select
-        for sel_id in ["organizations", "schools", "organization"]:
-            try:
-                if select_by_text(driver, sel_id, SCHOOL, wait_time=5):
-                    school_selected = True
-                    break
-            except:
-                continue
-        
-        if not school_selected:
-            print("⚠️ Не удалось выбрать школу автоматически")
-
-        # 7. Вводим логин
-        print("\n--- Вводим логин ---")
-        login_field = wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "input[placeholder='Логин']")
+        # 2. Ищем поля логина и пароля ВНУТРИ блока школы
+        print("Ищем поля ввода...")
+        form_block = wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, ".box-form.visible")
         ))
+        
+        login_field = form_block.find_element(By.NAME, "UN")
+        password_field = form_block.find_element(By.NAME, "PW")
+        print("✅ Поля найдены")
+
+        # 3. Вводим данные
+        print("Вводим логин и пароль...")
         login_field.clear()
         login_field.send_keys(login)
         time.sleep(1)
-        print("✅ Логин введён")
-
-        # 8. Вводим пароль
-        print("--- Вводим пароль ---")
-        password_field = driver.find_element(By.CSS_SELECTOR, "input[placeholder='Пароль']")
         password_field.clear()
         password_field.send_keys(password)
         time.sleep(1)
-        print("✅ Пароль введён")
 
-              # 9. Нажимаем "Войти"
-        print("\n--- Нажимаем 'Войти' ---")
-        submit_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Войти')]")
+        # 4. Нажимаем кнопку "Войти"
+        print("Нажимаем 'Войти'...")
+        submit_btn = form_block.find_element(By.CSS_SELECTOR, ".button-login-marker")
         submit_btn.click()
         time.sleep(8)
 
-              # 9.1. Проверяем предупреждение о другом пользователе
-        print("--- Проверяем предупреждение ---")
-        time.sleep(3)
-        
-        warning_clicked = False
-        # Пробуем разные способы найти кнопку "Продолжить"
-        selectors = [
-            (By.XPATH, "//input[@value='Продолжить']"),
-            (By.XPATH, "//input[@value='Continue']"),
-            (By.XPATH, "//button[contains(text(), 'Продолжить')]"),
-            (By.XPATH, "//a[contains(text(), 'Продолжить')]"),
-            (By.XPATH, "//*[contains(text(), 'Продолжить')]"),
-        ]
-        
-        for by, sel in selectors:
-            try:
-                btn = driver.find_element(by, sel)
-                btn.click()
-                print(f"✅ Нажали 'Продолжить' ({sel})")
-                warning_clicked = True
-                time.sleep(8)
-                break
-            except:
-                continue
-        
-        if not warning_clicked:
-            print("✅ Предупреждения не было — продолжаем")
-        
-        # Делаем скриншот после нажатия
-        with open("debug_after_warning.html", "w", encoding="utf-8") as f:
-            f.write(driver.page_source)
-        print("💾 Сохранён debug_after_warning.html")
+        # 5. Обрабатываем предупреждение "Продолжить"
+        print("Проверяем предупреждение...")
+        try:
+            continue_btn = driver.find_element(By.XPATH, "//input[@value='Продолжить']")
+            print("⚠️ Нашли предупреждение. Нажимаем 'Продолжить'...")
+            continue_btn.click()
+            time.sleep(8)
+        except:
+            print("✅ Предупреждения нет")
 
-        # 10. Сохраняем HTML после входа
+        # 6. Сохраняем HTML после входа
         with open("debug_after_login.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
-        print("💾 Сохранён debug_after_login.html")
+        print(f"💾 debug_after_login.html | URL: {driver.current_url}")
 
-        # 11. Переходим к отчётам
-        print("\n--- Переходим к отчётам ---")
+        # 7. Переходим к оценкам
+        print("Переходим к отчётам...")
         driver.get("http://drzd.ru/angular/school/reports/studenttotal")
-        time.sleep(10)
+        time.sleep(12)
 
         with open("debug_grades.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
-        print("💾 Сохранён debug_grades.html")
-        print(f"URL страницы с оценками: {driver.current_url}")
+        print(f"💾 debug_grades.html | URL: {driver.current_url}")
 
-        # 12. Парсим таблицы
-        print("\n--- Собираем оценки ---")
+        # 8. Парсим оценки
+        print("Собираем оценки...")
         grades_data = []
         
-        rows = driver.find_elements(By.CSS_SELECTOR, "tr")
-        print(f"Всего строк <tr>: {len(rows)}")
+        selectors = [
+            ".table-print tr",
+            "table tr",
+            ".report-table tr",
+            "tbody tr",
+        ]
         
-        for row in rows:
+        all_rows = []
+        for sel in selectors:
+            rows = driver.find_elements(By.CSS_SELECTOR, sel)
+            if len(rows) > len(all_rows):
+                all_rows = rows
+                print(f"Селектор {sel}: {len(rows)} строк")
+        
+        print(f"Всего строк: {len(all_rows)}")
+
+        for row in all_rows:
             try:
                 cells = row.find_elements(By.TAG_NAME, "td")
                 if len(cells) >= 2:
@@ -196,7 +126,7 @@ def main():
             df.to_csv("grades.csv", index=False, encoding="utf-8-sig")
             print(f"\n✅ Сохранено {len(grades_data)} оценок в grades.csv")
         else:
-            print("\n❌ Оценки не найдены")
+            print("\n❌ Оценки не найдены. Смотри debug_grades.html")
 
     except Exception as e:
         print(f"\n❌ ОШИБКА: {e}")
