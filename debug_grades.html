@@ -1,0 +1,250 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<title>Сетевой Город. Образование</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=600">
+	<link rel="manifest" href="/static/dist/common/manifest.webmanifest">
+	<link rel="icon" href="/static/dist/common/img/favicon.ico" sizes="any">
+	<link rel="icon" href="/static/dist/common/img/icon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="/static/dist/common/img/shortcut-icon.png">
+    <link rel="apple-touch-icon" href="/static/dist/common/img/shortcut-icon.png">
+	<link rel="stylesheet" type="text/css" href="/static/dist/pages/about/css/start-page.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/custom/fonts/font-awesome/css/font-awesome.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/glyphicon-preload.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/bootstrap3-dialog/css/bootstrap-dialog.min.css">
+	<link rel="stylesheet" type="text/css" href="/extras/about.css?ver=5.23.69340.77">
+	<!--[if IE 9]>
+	<link rel="stylesheet" type="text/css" href="/vendor/pages/css/about_ie9.css"/>
+	<![endif]-->
+
+	<script src="/vendor/components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+	<script src="/vendor/components/underscore/underscore-min.js" type="text/javascript"></script>
+	<script src="/js/libs/bowser.min.js" type="text/javascript"></script>
+	<script src="/vendor/components/handlebars/handlebars.min.js" type="text/javascript"></script>
+
+	<script>
+        function getChromeVersion () {
+            var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+            return raw ? parseInt(raw[2], 10) : false;
+        }
+
+		if (navigator.appName == 'Microsoft Internet Explorer'
+			|| !!(navigator.userAgent.match(/Trident/) || (typeof $.browser !== "undefined" && $.browser.msie == 1))
+			|| getChromeVersion() < 57)
+		{
+			var fileref = document.createElement('script')
+			fileref.setAttribute("type","text/javascript")
+			fileref.setAttribute("src", "/vendor/components/babel-polyfill-standalone/babel-polyfill.min.js")
+			document.getElementsByTagName("head")[0].appendChild(fileref);
+		}
+	</script>
+
+	<script src="/static/dist/lng/language_ru.js?ver=5.23.69340.77" type="text/javascript"></script>
+	<script src="/static/dist/lng/language_ru_0.js?ver=5.23.69340.77" type="text/javascript"></script>
+	<script src="/static/dist/common/js/core-scripts.js?ver=5.23.69340.77" type="text/javascript"></script>
+<link rel="stylesheet" href="/static/dist/common/css/ext-styles.min.css" type="text/css" media="screen"><link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css" type="text/css" media="screen"></head>
+<body>
+	<!--[if lt IE 8]><style> .entry-form{ position: relative !important; } </style> <![endif]-->
+	<!--preloader-->
+	<div id="login-page-preloader" class="page-preloader" style="display: none;">
+		<div class="spinner" style="display: none;"><span class="text">подождите...</span></div>
+	</div>
+
+<span class="glyphicon-preload glyphicon-preload-ok"></span>
+
+	<div class="body"><div id="wrapper_inner">
+	<!--[if lt IE 8]><div class="parent-ie6"><![endif]-->
+	<div class="centered">
+		<div class="entry-form loginbox appear">
+	
+		<div class="img-logo hidden-xs"></div>
+<span class="span-product-name">Сетевой Город. Образование</span>
+
+
+		<div class="sectiontable">
+			<ul class="tabs-form">
+				<li id="School" class="current">Образовательная организация</li>
+				<li id="EM">Орган управления</li>
+			</ul>
+
+			<div class="box-form visible">
+				<div id="message" class="message-form">
+					<input type="hidden" name="LoginType" value="1">
+					<div class="info">
+						<div class="row">
+							<div class="row form-horizontal" style="display: none;">
+								<span class="control-label col-md-4">Страна</span>
+								<div class="col-md-6 select-main">
+									<select id="countries" name="cid"><option value="-999999">Выберите страну...</option><option value="2">Россия</option></select>
+								</div>
+							</div>
+							<div class="row form-horizontal">
+								<span class="control-label col-md-4">Регион</span>
+								<div class="col-md-6 select-main">
+									<select id="states" name="sid"><option value="-999999">Выберите регион...</option><option value="38">Иркутская обл</option><option value="3">Респ. Бурятия</option></select>
+								</div>
+							</div>
+							<div class="row form-horizontal">
+								<span class="control-label col-md-4">Городской округ / Муниципальный район</span>
+								<div class="col-md-6 select-main">
+									<select id="provinces" name="pid"><option value="-999999">Выберите городской округ или муниципальный район...</option><option value="-19">Городской округ Иркутск</option><option value="-18">Городской округ Нижнеудинск</option><option value="-7">Городской округ Тайшет</option><option value="1">Братский район</option><option value="30">Слюдянский район</option></select>
+								</div>
+							</div>
+							<div class="row form-horizontal">
+								<span class="control-label col-md-4">Населённый пункт</span>
+								<div class="col-md-6 select-main">
+									<select id="cities" name="cn" style="display: none;"><option value="-999999">Выберите населённый пункт...</option><option value="7">Тайшет, г.</option></select>
+								<span>Тайшет, г.</span></div>
+							</div>
+							<div class="row form-horizontal" style="display: none;">
+								<span class="control-label col-md-4">Тип ОО</span>
+								<div class="col-md-6 select-main">
+									<select id="funcs" name="sft"><option value="-999999">Выберите тип ОО...</option><option value="2">Общеобразовательная</option></select>
+								</div>
+							</div>
+							<div class="row form-horizontal">
+								<span class="control-label col-md-4">Образовательная организация</span>
+								<div class="col-md-6 select-main">
+									<select id="schools" name="scid" style="display: none;"><option value="-999999">Выберите ОО...</option><option value="2">РЖД лицей № 12</option></select>
+								<span>РЖД лицей № 12</span></div>
+							</div>
+
+							<div class="two-lines-decoration"></div>
+
+
+							<div class="row form-horizontal row-center-inset">
+								<input name="UN" placeholder="Логин" type="text" class="control-input col-md-6">
+							</div>
+							<div class="row form-horizontal row-center-inset">
+								<input name="PW" placeholder="Пароль" type="password" class="control-input col-md-6">
+							</div>
+
+							<div class="row form-horizontal row-center-a">
+								<a title="Восстановить пароль" id="recovery" href="JavaScript:void(0);">Восстановить пароль</a>
+							</div>
+							
+
+
+							<div class="row-center row-submit">
+								<a class="button-login button-login-marker" style="display: inline;" href="javascript:void(0)">
+									<span class="button-login-title">Войти </span>
+								</a>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="box-form box-form-departament ">
+				<div id="message-em" class="message-form">
+					<input type="hidden" name="LoginType" value="2">
+					<div class="info">
+						<div class="row form-horizontal">
+							<div class="row form-horizontal" style="display: none;">
+								<span class="control-label col-md-4">Страна</span>
+								<div class="col-md-6 select-main">
+									<select id="countries" name="em_cid"><option value="-999999">Выберите страну...</option><option value="2">Россия</option></select>
+								</div>
+							</div>
+							<div class="row form-horizontal">
+								<span class="control-label col-md-4">Регион</span>
+								<div class="col-md-6 select-main">
+									<select id="states" name="em_sid" style="display: none;"><option value="-999999">Выберите регион...</option><option value="38">Иркутская обл</option></select>
+								<span>Иркутская обл</span></div>
+							</div>
+							<div class="row form-horizontal" style="display: none;">
+								<span class="control-label col-md-4">Уровень иерархии</span>
+								<div class="col-md-6 select-main">
+									<select id="hlevels" name="hlevel"><option value="-999999">Выберите уровень иерархии...</option><option value="1">Смешанный</option></select>
+								</div>
+							</div>
+							<div class="row form-horizontal">
+								<span class="control-label col-md-4">Орган управления</span>
+								<div class="col-md-6 select-main">
+									<select id="ems" name="emId" style="display: none;"><option value="-999999">Выберите управление образования...</option><option value="1">СОУ ВСЖД</option></select>
+								<span>СОУ ВСЖД</span></div>
+							</div>
+
+							<div class="two-lines-decoration"></div>
+
+
+							<div class="row form-horizontal row-center-inset">
+								<input name="UN" placeholder="Логин" type="text" class="control-input col-md-6">
+							</div>
+							<div class="row form-horizontal row-center-inset">
+								<input name="PW" placeholder="Пароль" type="password" class="control-input col-md-6">
+							</div>
+
+
+							<div class="row-center row-submit">
+								<a class="button-login button-login-marker" style="display: inline;" href="javascript:void(0)">
+									<span class="button-login-title">Войти </span>
+								</a>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		
+		</div>
+	</div>
+</div>
+
+<div id="message-password-recovery" class="message" style="display: none">
+	<div class="close">
+		<a id="cexit_recovery" style="display: block"><img src="/vendor/custom/img/login_close.gif"></a>
+	</div>
+	<div class="head">
+		<span class="text-restore-password">Восстановление пароля</span>
+	</div>
+	<div class="text">
+		Вы можете самостоятельно восстановить свой пароль для входа в систему в том случае, если вы забыли свой текущий пароль. 
+Введите свой e-mail. Если указанный e-mail был заранее введен в систему  Сетевой Город. Образование , то система автоматически сформирует новый пароль и отправит его вам. Сетевой Город. Образование
+	</div>
+	<div class="info">
+		<div>
+			<div class="row form-horizontal row-center-inset">
+				<input name="recoveryValue" placeholder="E-mail" type="text" class="control-input col-md-6">
+			</div>
+		</div>
+		<div class="row-recovery">
+			<a class="button-login" href="JavaScript:void(0);">
+				<span class="button-login-title">Применить данные</span>
+			</a>
+		</div>
+	</div>
+	<div class="text">
+		Если же вы не заполнили заранее свой e-mail, то для восстановления пароля следует обратиться к администратору системы в ОО или к вашему классному руководителю.
+	</div>
+</div>
+
+<div id="overlay" style="display: none"></div>
+</div>
+
+	<script src="/static/dist/pages/about/js/about.js?ver=5.23.69340.77" type="text/javascript"></script>
+	<script src="/extras/about.js?ver=5.23.69340.77" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		var $buoop = { vs: { i: 11, f: 52, o: 44, s: 7, c: 49 }};
+		function $buo_f() {
+			var e = document.createElement("script");
+
+			e.src = "//browser-update.org/update.min.js";
+			document.body.appendChild(e);
+		};
+		try {
+			document.addEventListener("DOMContentLoaded", $buo_f, false);
+		}
+		catch ( e ) {
+			window.attachEvent("onload", $buo_f);
+		}
+	</script>
+
+
+<script src="//browser-update.org/update.min.js"></script></body></html>
