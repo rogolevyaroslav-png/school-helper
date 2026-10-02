@@ -1,5 +1,5 @@
 # scraper.py
-# Парсер оценок из Сетевого Город (drzd.ru) — финальная версия с JS
+# Парсер оценок из Сетевого Город (drzd.ru) — финальная версия
 
 import os
 import time
@@ -11,12 +11,11 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 def select_by_js(driver, select_id, value):
-    """Выбирает значение в <select> через JavaScript (работает для скрытых)."""
+    """Выбирает значение в <select> через jQuery (поддерживает change-события)."""
     js = f"""
-    var sel = document.getElementById('{select_id}');
-    sel.value = '{value}';
-    var event = new Event('change', {{ bubbles: true }});
-    sel.dispatchEvent(event);
+    var $sel = jQuery('#{select_id}');
+    $sel.val('{value}');
+    $sel.trigger('change');
     """
     driver.execute_script(js)
     print(f"✅ #{select_id} = {value}")
@@ -29,6 +28,12 @@ def main():
     if not login or not password:
         print("❌ Ошибка: логин или пароль не найдены.")
         return
+
+    # Убираем лишние пробелы
+    login = login.strip()
+    password = password.strip()
+
+    print(f"Логин: {login[:3]}***")  # показываем только первые 3 символа
 
     print("Настраиваем браузер...")
     options = webdriver.ChromeOptions()
@@ -47,45 +52,33 @@ def main():
         driver.get("http://drzd.ru/")
         time.sleep(5)
 
-        # 2. Выбираем регион, город, школу через JS
-        # Значения берём из HTML, который ты прислал:
-        # states=38 (Иркутская обл)
-        # provinces=-19 (Городской округ Иркутск)
-        # cities=19 (Иркутск, г.)
-        # schools=3 (РЖД лицей №14)
+        # 2. Выбираем регион, город, школу через jQuery
         print("--- Выбираем регион/город/школу ---")
-        select_by_js(driver, "states", "38")
-        time.sleep(2)
-        select_by_js(driver, "provinces", "-19")
         time.sleep(3)
-        
-        # cities и schools могут появиться после выбора provinces — пробуем
-        try:
-            select_by_js(driver, "cities", "19")
-            time.sleep(2)
-        except Exception as e:
-            print(f"⚠️ cities не выбрался: {e}")
-        
-        try:
-            select_by_js(driver, "schools", "3")
-            time.sleep(2)
-        except Exception as e:
-            print(f"⚠️ schools не выбрался: {e}")
 
-        # 3. Сохраняем HTML после выбора
+        select_by_js(driver, "states", "38")       # Иркутская обл
+        time.sleep(3)
+        select_by_js(driver, "provinces", "-19")   # Городской округ Иркутск
+        time.sleep(4)
+        select_by_js(driver, "cities", "19")       # Иркутск, г.
+        time.sleep(3)
+        select_by_js(driver, "schools", "3")       # РЖД лицей №14
+        time.sleep(3)
+
+        # Сохраняем HTML для проверки выбора
         with open("debug_after_region.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
         print("💾 debug_after_region.html сохранён")
 
-        # 4. Вводим логин/пароль в блоке школы
+        # 3. Вводим логин/пароль в блоке школы
         print("--- Вводим логин/пароль ---")
         form_block = wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".box-form.visible")
         ))
-        
+
         login_field = form_block.find_element(By.NAME, "UN")
         password_field = form_block.find_element(By.NAME, "PW")
-        
+
         login_field.clear()
         login_field.send_keys(login)
         time.sleep(1)
@@ -94,13 +87,13 @@ def main():
         time.sleep(1)
         print("✅ Данные введены")
 
-        # 5. Нажимаем "Войти"
+        # 4. Нажимаем "Войти"
         print("--- Нажимаем 'Войти' ---")
         submit_btn = form_block.find_element(By.CSS_SELECTOR, ".button-login-marker")
         submit_btn.click()
         time.sleep(8)
 
-        # 6. Обрабатываем предупреждение "Продолжить"
+        # 5. Обрабатываем предупреждение "Продолжить"
         print("--- Проверяем предупреждение ---")
         try:
             continue_btn = driver.find_element(By.XPATH, "//input[@value='Продолжить']")
@@ -110,12 +103,19 @@ def main():
         except:
             print("✅ Предупреждения нет")
 
-        # 7. Сохраняем HTML после входа
+        # 6. Сохраняем HTML после входа
         with open("debug_after_login.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
         print(f"💾 debug_after_login.html | URL: {driver.current_url}")
 
-        # 8. Переходим к оценкам
+        # Проверяем, не остались ли на странице входа (значит, ошибка логина)
+        page_source = driver.page_source
+        if "Неправильный пароль или логин" in page_source:
+            print("❌ ОШИБКА АВТОРИЗАЦИИ: Неправильный пароль или логин!")
+            print("   Проверь секреты DNEVNIK_LOGIN и DNEVNIK_PASSWORD в GitHub Settings.")
+            return
+
+        # 7. Переходим к оценкам
         print("--- Переходим к отчётам ---")
         driver.get("http://drzd.ru/angular/school/reports/studenttotal")
         time.sleep(12)
@@ -124,10 +124,10 @@ def main():
             f.write(driver.page_source)
         print(f"💾 debug_grades.html | URL: {driver.current_url}")
 
-        # 9. Парсим оценки
+        # 8. Парсим оценки
         print("--- Собираем оценки ---")
         grades_data = []
-        
+
         selectors = [".table-print tr", "table tr", ".report-table tr", "tbody tr"]
         all_rows = []
         for sel in selectors:
@@ -135,7 +135,7 @@ def main():
             if len(rows) > len(all_rows):
                 all_rows = rows
                 print(f"Селектор {sel}: {len(rows)} строк")
-        
+
         print(f"Всего строк: {len(all_rows)}")
 
         for row in all_rows:
