@@ -42,6 +42,7 @@ def main():
     wait = WebDriverWait(driver, 30)
 
     try:
+        # === 1. ОТКРЫВАЕМ САЙТ И ВЫБИРАЕМ ШКОЛУ ===
         print("Открываем сайт...")
         driver.get("http://drzd.ru/")
         time.sleep(5)
@@ -57,6 +58,7 @@ def main():
         select_by_js(driver, "schools", "3")
         time.sleep(3)
 
+        # === 2. ЛОГИН ===
         print("--- Вводим логин/пароль ---")
         form_block = wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".box-form.visible")
@@ -76,7 +78,7 @@ def main():
         submit_btn.click()
         time.sleep(10)
 
-        # === ОБРАБОТКА ПРЕДУПРЕЖДЕНИЯ ===
+        # === 3. ПРЕДУПРЕЖДЕНИЕ ===
         print("--- Обрабатываем предупреждение ---")
         time.sleep(3)
 
@@ -91,7 +93,6 @@ def main():
             if attempt == 1:
                 with open("debug_warning.html", "w", encoding="utf-8") as f:
                     f.write(driver.page_source)
-                print("  💾 debug_warning.html сохранён")
 
             clicked = False
 
@@ -101,7 +102,6 @@ def main():
                     text = (link.text or "").strip()
                     if "Продолжить" in text or "Continue" in text:
                         href = link.get_attribute("href") or ""
-                        print(f"  Найдена ссылка '{text}', href='{href}'")
                         if href and href.startswith("http") and "javascript" not in href:
                             driver.get(href)
                             clicked = True
@@ -153,50 +153,74 @@ def main():
             print("❌ ОШИБКА АВТОРИЗАЦИИ!")
             return
 
-            # === РАБОТА С ОТЧЁТАМИ ===
-        print("--- Мы в /reports/, ищем конкретный отчёт ---")
-        time.sleep(10)
+        # === 4. КЛИК ПО "ОТЧЁТЫ" В МЕНЮ ===
+        print("--- Ищем меню 'Отчёты' ---")
+        time.sleep(5)
+
+        all_links = driver.find_elements(By.TAG_NAME, "a")
+        print(f"Всего ссылок: {len(all_links)}")
+
+        reports_opened = False
+        for link in all_links:
+            try:
+                text = (link.text or "").strip()
+                if "Отчёт" in text or "Отчет" in text:
+                    print(f"✅ Кликаем '{text}'")
+                    driver.execute_script("arguments[0].click();", link)
+                    reports_opened = True
+                    time.sleep(10)
+                    break
+            except:
+                continue
+
+        if not reports_opened:
+            print("⚠️ Меню 'Отчёты' не найдено, пробуем URL")
+            driver.get("http://drzd.ru/angular/school/reports/")
+            time.sleep(10)
+
+        print(f"💾 URL сейчас: {driver.current_url}")
 
         with open("debug_reports_page.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
-        print("💾 debug_reports_page.html сохранён")
 
-        # Собираем все ссылки для отладки
+        # === 5. ИЩЕМ КОНКРЕТНЫЙ ОТЧЁТ ===
+        print("--- Ищем отчёт 'Успеваемость' ---")
+        time.sleep(5)
+
         report_links = driver.find_elements(By.TAG_NAME, "a")
-        print(f"Всего ссылок на /reports/: {len(report_links)}")
+        print(f"Ссылок на /reports/: {len(report_links)}")
         for link in report_links:
             try:
                 text = (link.text or "").strip()
                 href = link.get_attribute("href") or ""
                 onclick = link.get_attribute("onclick") or ""
                 if text:
-                    print(f"  «{text}» | href={href} | onclick={onclick[:60]}")
+                    print(f"  «{text}» | href={href} | onclick={onclick[:80]}")
             except:
                 continue
 
-        # Смотрим таблицы
-        print("--- Таблицы на странице /reports/ ---")
+        # Таблицы
         tables = driver.find_elements(By.CSS_SELECTOR, "table")
+        print(f"--- Таблиц на странице: {len(tables)} ---")
         for i, table in enumerate(tables):
-            print(f"Таблица {i+1}:")
             rows = table.find_elements(By.TAG_NAME, "tr")
+            print(f"Таблица {i+1}: {len(rows)} строк")
             for j, row in enumerate(rows):
                 row_text = row.text.strip()
                 if row_text:
                     print(f"  [{j}] {row_text[:180]}")
 
-        # Ищем отчёт «Успеваемость»
-        print("--- Ищем 'Успеваемость' / 'Итоговые' ---")
-        report_opened = False
+        # Кликаем по отчёту
+        print("--- Пробуем открыть отчёт ---")
         report_kw = ["успеваемост", "итогов", "оценк", "табель", "сводн", "четверт", "текущ"]
+        report_opened = False
 
-        # Способ 1: клик по ссылке
         for link in report_links:
             try:
                 text = (link.text or "").strip().lower()
                 for kw in report_kw:
                     if kw in text:
-                        print(f"✅ Найдена ссылка '{link.text}'. Кликаем через JS...")
+                        print(f"✅ Кликаем ссылку '{link.text}'")
                         driver.execute_script("arguments[0].click();", link)
                         report_opened = True
                         time.sleep(10)
@@ -206,9 +230,7 @@ def main():
             except:
                 continue
 
-        # Способ 2: клик по ячейке таблицы
         if not report_opened:
-            print("--- Пробуем кликнуть по строкам таблицы ---")
             for table in tables:
                 rows = table.find_elements(By.TAG_NAME, "tr")
                 for row in rows:
@@ -233,13 +255,12 @@ def main():
         if not report_opened:
             print("⚠️ Не нашли отчёт для клика")
 
-        # Сохраняем HTML после клика
         with open("debug_grades_final.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
         print(f"💾 debug_grades_final.html | URL: {driver.current_url}")
 
-        # Ищем кнопку "Сформировать"
-        print("--- Ищем кнопку 'Сформировать' ---")
+        # === 6. КНОПКА "СФОРМИРОВАТЬ" ===
+        print("--- Ищем 'Сформировать' ---")
         all_buttons = driver.find_elements(By.TAG_NAME, "button")
         all_buttons += driver.find_elements(By.TAG_NAME, "a")
         all_buttons += driver.find_elements(By.TAG_NAME, "input")
@@ -248,57 +269,18 @@ def main():
             try:
                 text = (btn.text or btn.get_attribute("value") or "").strip().lower()
                 if any(w in text for w in ["сформир", "показат", "построит", "получить", "вывести"]):
-                    print(f"✅ Кликаем '{btn.text}'. Ждём отчёт...")
+                    print(f"✅ Кликаем '{btn.text}'")
                     driver.execute_script("arguments[0].click();", btn)
                     time.sleep(15)
                     break
             except:
                 continue
 
-        # Сохраняем финальный HTML
         with open("debug_grades_result.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
         print(f"💾 debug_grades_result.html | URL: {driver.current_url}")
 
-        # === СОБИРАЕМ ОЦЕНКИ ===
-        print("--- Собираем оценки ---")
-        grades_data = []
-
-        selectors = [".table-print tr", "table tr", ".report-table tr", "tbody tr"]
-        all_rows = []
-        for sel in selectors:
-            rows = driver.find_elements(By.CSS_SELECTOR, sel)
-            if len(rows) > len(all_rows):
-                all_rows = rows
-                print(f"Селектор {sel}: {len(rows)} строк")
-
-        print(f"Всего строк: {len(all_rows)}")
-
-        for row in all_rows:
-            try:
-                cells = row.find_elements(By.TAG_NAME, "td")
-                if len(cells) >= 2:
-                    subject = cells[0].text.strip()
-                    for cell in cells[1:]:
-                        text = cell.text.strip()
-                        if text and text.isdigit() and 2 <= int(text) <= 5:
-                            if subject:
-                                grades_data.append({
-                                    "subject": subject,
-                                    "grade": int(text),
-                                    "date": ""
-                                })
-            except:
-                continue
-
-        if grades_data:
-            df = pd.DataFrame(grades_data)
-            df.to_csv("grades.csv", index=False, encoding="utf-8-sig")
-            print(f"\n✅ Сохранено {len(grades_data)} оценок в grades.csv")
-        else:
-            print("\n❌ Оценки не найдены. Смотри debug_reports_page.html и debug_grades_final.html")
-
-        # === СОБИРАЕМ ОЦЕНКИ ===
+        # === 7. СОБИРАЕМ ОЦЕНКИ ===
         print("--- Собираем оценки ---")
         grades_data = []
 
@@ -344,6 +326,7 @@ def main():
         except:
             pass
     finally:
+        driver.close()
         driver.quit()
 
 
