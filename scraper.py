@@ -179,14 +179,80 @@ def main():
             return
 
         # === ОТЧЁТЫ ===
-        print("--- Открываем отчёты ---")
-        driver.get("http://drzd.ru/angular/school/reports/studenttotal")
-        time.sleep(12)
+           # === ИЩЕМ ОЦЕНКИ ЧЕРЕЗ МЕНЮ ===
+        print("--- Ищем меню дневника ---")
+        time.sleep(5)
 
+        # Собираем все ссылки на странице для отладки
+        all_links = driver.find_elements(By.TAG_NAME, "a")
+        print(f"Всего ссылок на странице: {len(all_links)}")
+        
+        menu_links = []
+        for link in all_links:
+            try:
+                text = (link.text or "").strip()
+                href = link.get_attribute("href") or ""
+                if text:
+                    menu_links.append((text, href))
+            except:
+                continue
+        
+        print("=== ССЫЛКИ В МЕНЮ ===")
+        for text, href in menu_links:
+            print(f"  «{text}» → {href}")
+        print("====================")
+
+        # Ищем ссылку на отчёты
+        print("--- Ищем 'Отчёты' / 'Успеваемость' ---")
+        report_clicked = False
+        
+        keywords = ["отчёт", "отчет", "успеваем", "оценк", "итогов"]
+        
+        for link in all_links:
+            try:
+                text = (link.text or "").strip().lower()
+                for kw in keywords:
+                    if kw in text:
+                        print(f"✅ Нашли ссылку: '{link.text}'. Кликаем...")
+                        driver.execute_script("arguments[0].click();", link)
+                        report_clicked = True
+                        time.sleep(8)
+                        break
+                if report_clicked:
+                    break
+            except:
+                continue
+
+        if not report_clicked:
+            print("⚠️ Ссылка на отчёты не найдена — пробуем прямой URL")
+
+        # Сохраняем HTML после клика
         with open("debug_grades.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
         print(f"💾 debug_grades.html | URL: {driver.current_url}")
 
+        # Если попали на страницу отчётов — нужно найти кнопку "Сформировать" или похожую
+        print("--- Ищем кнопку 'Сформировать' / 'Показать' ---")
+        try:
+            buttons = driver.find_elements(By.TAG_NAME, "button")
+            buttons += driver.find_elements(By.TAG_NAME, "a")
+            
+            for btn in buttons:
+                text = (btn.text or "").strip().lower()
+                if "сформир" in text or "показат" in text or "построит" in text:
+                    print(f"✅ Нашли кнопку: '{btn.text}'. Кликаем...")
+                    driver.execute_script("arguments[0].click();", btn)
+                    time.sleep(10)
+                    break
+        except Exception as e:
+            print(f"⚠️ Ошибка поиска кнопки: {e}")
+
+        # Сохраняем итоговый HTML
+        with open("debug_grades_final.html", "w", encoding="utf-8") as f:
+            f.write(driver.page_source)
+        print(f"💾 debug_grades_final.html | URL: {driver.current_url}")
+
+        # === СОБИРАЕМ ОЦЕНКИ ===
         print("--- Собираем оценки ---")
         grades_data = []
 
@@ -199,6 +265,30 @@ def main():
                 print(f"Селектор {sel}: {len(rows)} строк")
 
         print(f"Всего строк: {len(all_rows)}")
+
+        for row in all_rows:
+            try:
+                cells = row.find_elements(By.TAG_NAME, "td")
+                if len(cells) >= 2:
+                    subject = cells[0].text.strip()
+                    for cell in cells[1:]:
+                        text = cell.text.strip()
+                        if text and text.isdigit() and 2 <= int(text) <= 5:
+                            if subject:
+                                grades_data.append({
+                                    "subject": subject,
+                                    "grade": int(text),
+                                    "date": ""
+                                })
+            except:
+                continue
+
+        if grades_data:
+            df = pd.DataFrame(grades_data)
+            df.to_csv("grades.csv", index=False, encoding="utf-8-sig")
+            print(f"\n✅ Сохранено {len(grades_data)} оценок в grades.csv")
+        else:
+            print("\n❌ Оценки не найдены")
 
         for row in all_rows:
             try:
