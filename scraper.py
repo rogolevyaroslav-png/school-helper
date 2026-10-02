@@ -1,6 +1,4 @@
 # scraper.py
-# Этот скрипт запускается на GitHub Actions и обновляет файл grades.csv
-
 import os
 import time
 import pandas as pd
@@ -12,7 +10,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 def main():
-    # 1. Получаем логин и пароль из "секретов" GitHub
     login = os.environ.get("DNEVNIK_LOGIN")
     password = os.environ.get("DNEVNIK_PASSWORD")
 
@@ -20,118 +17,152 @@ def main():
         print("❌ Ошибка: логин или пароль не найдены в секретах.")
         return
 
-    # 2. Настраиваем браузер
     print("Настраиваем браузер...")
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--window-size=1920,1080')
     
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
-    wait = WebDriverWait(driver, 20) # Будем ждать до 20 секунд
+    wait = WebDriverWait(driver, 20)
 
     try:
-        # 3. Открываем сайт дневника
         print("Открываем сайт дневника...")
-        driver.get("http://drzd.ru/") # Используем корневой URL
+        driver.get("http://drzd.ru/")
         time.sleep(5)
-        
-        # 4. Ищем поля для входа (пробуем разные варианты)
-        print("Ищем поля для ввода логина и пароля...")
-        
-        # Сначала попробуем найти поле логина по общим атрибутам
+
+        # Ищем поле логина — пробуем разные варианты
+        print("Ищем поле логина...")
         login_field = None
-        for by, value in [(By.NAME, "username"), (By.NAME, "login"), (By.ID, "login"), (By.CSS_SELECTOR, "input[type='text']")]:
+        for by, value in [
+            (By.CSS_SELECTOR, "input[placeholder='Логин']"),
+            (By.CSS_SELECTOR, "input[type='text']"),
+            (By.NAME, "username"),
+            (By.NAME, "login"),
+        ]:
             try:
-                login_field = wait.until(EC.presence_of_element_located((by, value)))
-                print(f"✅ Нашли поле логина: {by}={value}")
+                login_field = driver.find_element(by, value)
+                print(f"✅ Поле логина найдено: {by} = {value}")
                 break
             except:
                 continue
         
         if not login_field:
-            raise Exception("Не удалось найти поле для логина")
+            raise Exception("Не нашли поле логина")
 
-        # То же для пароля
+        # Ищем поле пароля
+        print("Ищем поле пароля...")
         password_field = None
-        for by, value in [(By.NAME, "password"), (By.ID, "password"), (By.CSS_SELECTOR, "input[type='password']")]:
+        for by, value in [
+            (By.CSS_SELECTOR, "input[placeholder='Пароль']"),
+            (By.CSS_SELECTOR, "input[type='password']"),
+            (By.NAME, "password"),
+        ]:
             try:
                 password_field = driver.find_element(by, value)
-                print(f"✅ Нашли поле пароля: {by}={value}")
+                print(f"✅ Поле пароля найдено: {by} = {value}")
                 break
             except:
                 continue
         
         if not password_field:
-            raise Exception("Не удалось найти поле для пароля")
+            raise Exception("Не нашли поле пароля")
 
-        # 5. Вводим данные и логинимся
-        print("Вводим данные для входа...")
+        # Вводим данные
+        print("Вводим логин и пароль...")
+        login_field.clear()
         login_field.send_keys(login)
+        password_field.clear()
         password_field.send_keys(password)
-        
-        # Ищем кнопку входа
+        time.sleep(1)
+
+        # Ищем кнопку "Войти"
+        print("Ищем кнопку 'Войти'...")
         submit_button = None
-        for by, value in [(By.CSS_SELECTOR, "button[type='submit']"), (By.CSS_SELECTOR, "input[type='submit']"), (By.XPATH, "//button[contains(text(), 'Войти')]")]:
+        for by, value in [
+            (By.XPATH, "//button[contains(text(), 'Войти')]"),
+            (By.XPATH, "//*[contains(text(), 'Войти')]"),
+            (By.CSS_SELECTOR, "button[type='submit']"),
+        ]:
             try:
                 submit_button = driver.find_element(by, value)
-                print(f"✅ Нашли кнопку входа: {by}={value}")
+                print(f"✅ Кнопка найдена: {by} = {value}")
                 break
             except:
                 continue
         
         if not submit_button:
-            raise Exception("Не удалось найти кнопку для входа")
+            raise Exception("Не нашли кнопку 'Войти'")
 
         submit_button.click()
-        
-        print("Ждём загрузки страницы с оценками...")
-        time.sleep(10) # Даём время на загрузку
+        print("Нажали 'Войти'. Ждём загрузки...")
+        time.sleep(10)
 
-        # 6. Собираем оценки (селекторы нужно будет уточнить после скриншота!)
-        print("Собираем оценки...")
+        # Переходим на страницу с оценками
+        print("Переходим на страницу с оценками...")
+        driver.get("http://drzd.ru/angular/school/reports/studenttotal")
+        time.sleep(10)
+
+        # Сохраняем HTML страницы в лог, чтобы понять структуру
+        print("=" * 60)
+        print("HTML СТРАНИЦЫ С ОЦЕНКАМИ (первые 5000 символов):")
+        print("=" * 60)
+        html = driver.page_source
+        print(html[:5000])
+        print("=" * 60)
+        print(f"Всего символов в HTML: {len(html)}")
+
+        # Пробуем найти таблицы
+        print("\nИщем таблицы на странице...")
+        tables = driver.find_elements(By.TAG_NAME, "table")
+        print(f"Найдено таблиц: {len(tables)}")
+        
+        for i, table in enumerate(tables):
+            print(f"\n--- Таблица {i+1} ---")
+            print(table.text[:500])
+
+        # Пробуем собрать строки с оценками
+        print("\nСобираем данные...")
         grades_data = []
         
-        # Пытаемся найти таблицу с оценками
-        # Это заглушка, точные селекторы мы определим позже
-        try:
-            # Ищем все строки таблицы
-            rows = driver.find_elements(By.CSS_SELECTOR, "table tr")
-            print(f"Найдено строк в таблицах: {len(rows)}")
-            
-            for row in rows:
-                try:
-                    # Пытаемся извлечь данные из ячеек
-                    cells = row.find_elements(By.TAG_NAME, "td")
-                    if len(cells) >= 3:
-                        # Предполагаем, что первые три ячейки - это предмет, оценка, дата
-                        subject = cells[0].text
-                        grade_text = cells[1].text
-                        date = cells[2].text
-                        
-                        # Проверяем, является ли оценка числом
-                        if grade_text.strip().isdigit():
-                            grades_data.append({
-                                "subject": subject,
-                                "grade": int(grade_text),
-                                "date": date
-                            })
-                except:
-                    continue
-        except Exception as e:
-            print(f"Ошибка при парсинге таблицы: {e}")
+        rows = driver.find_elements(By.CSS_SELECTOR, "tr")
+        print(f"Найдено строк <tr>: {len(rows)}")
+        
+        for row in rows:
+            try:
+                cells = row.find_elements(By.TAG_NAME, "td")
+                if len(cells) >= 3:
+                    subject = cells[0].text.strip()
+                    grade_text = cells[1].text.strip()
+                    date = cells[2].text.strip()
+                    if grade_text.isdigit() and 2 <= int(grade_text) <= 5:
+                        grades_data.append({
+                            "subject": subject,
+                            "grade": int(grade_text),
+                            "date": date
+                        })
+            except:
+                continue
 
-        # 7. Сохраняем данные в CSV
         if grades_data:
             df = pd.DataFrame(grades_data)
             df.to_csv("grades.csv", index=False, encoding="utf-8-sig")
-            print(f"✅ Успешно сохранено {len(grades_data)} оценок в grades.csv")
+            print(f"\n✅ Сохранено {len(grades_data)} оценок в grades.csv")
         else:
-            print("❌ Не удалось найти оценки. Проверь селекторы.")
+            print("\n❌ Оценки не найдены. Смотри HTML выше.")
 
     except Exception as e:
-        print(f"❌ Произошла ошибка: {e}")
+        print(f"\n❌ ОШИБКА: {e}")
+        # Сохраняем скриншот и HTML для отладки
+        try:
+            driver.save_screenshot("error_screenshot.png")
+            with open("error_page.html", "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+            print("Сохранён скриншот и HTML для отладки")
+        except:
+            pass
     finally:
         print("Закрываем браузер...")
         driver.quit()
