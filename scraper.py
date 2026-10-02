@@ -79,15 +79,88 @@ def main():
         submit_btn.click()
         time.sleep(10)
 
-        # === ОБРАБОТКА ПРЕДУПРЕЖДЕНИЯ ===
+          # === ОБРАБОТКА ПРЕДУПРЕЖДЕНИЯ ===
         print("--- Ждём появления предупреждения (5 сек) ---")
         time.sleep(5)
 
         warning_handled = False
-        for attempt in range(1, 11):  # 10 попыток по 2 секунды = 20 секунд
-            print(f"  Попытка {attempt}: проверяем URL и кнопки...")
-            current_url = driver.current_url
-            print(f"  URL: {current_url}")
+        for attempt in range(1, 16):  # 15 попыток
+            print(f"  Попытка {attempt}: URL = {driver.current_url}")
+
+            # Проверяем, что мы на странице предупреждения
+            if "SecurityWarning" not in driver.current_url:
+                print("  ✅ Уже не на предупреждении — идём дальше")
+                warning_handled = True
+                break
+
+            # Сохраняем HTML для отладки (только при первой попытке)
+            if attempt == 1:
+                with open("debug_warning.html", "w", encoding="utf-8") as f:
+                    f.write(driver.page_source)
+                print("  💾 debug_warning.html сохранён")
+
+            # Способ 1: найти ВСЕ элементы с текстом "Продолжить" и кликнуть через JS
+            try:
+                elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Продолжить')]")
+                print(f"  Найдено элементов с 'Продолжить': {len(elements)}")
+                if elements:
+                    driver.execute_script("arguments[0].click();", elements[0])
+                    print("  ✅ Кликнули через JS")
+                    time.sleep(8)
+                    continue
+            except Exception as e:
+                print(f"  Способ 1 не сработал: {e}")
+
+            # Способ 2: найти input с value='Продолжить'
+            try:
+                btn = driver.find_element(By.XPATH, "//input[@value='Продолжить']")
+                driver.execute_script("arguments[0].click();", btn)
+                print("  ✅ Кликнули input через JS")
+                time.sleep(8)
+                continue
+            except:
+                pass
+
+            # Способ 3: найти любую кнопку/ссылку рядом с текстом
+            try:
+                links = driver.find_elements(By.TAG_NAME, "a")
+                for link in links:
+                    if "Продолжить" in link.text:
+                        driver.execute_script("arguments[0].click();", link)
+                        print(f"  ✅ Кликнули ссылку: {link.text}")
+                        time.sleep(8)
+                        break
+                else:
+                    raise Exception("Ссылка не найдена")
+                continue
+            except:
+                pass
+
+            # Способ 4: отправить форму напрямую
+            try:
+                forms = driver.find_elements(By.TAG_NAME, "form")
+                if forms:
+                    driver.execute_script("arguments[0].submit();", forms[0])
+                    print("  ✅ Отправили форму")
+                    time.sleep(8)
+                    continue
+            except:
+                pass
+
+            # Способ 5: нажать Enter на body
+            try:
+                from selenium.webdriver.common.keys import Keys
+                body = driver.find_element(By.TAG_NAME, "body")
+                body.send_keys(Keys.ENTER)
+                print("  ✅ Нажали Enter")
+                time.sleep(5)
+            except:
+                pass
+
+            time.sleep(2)
+
+        if not warning_handled:
+            print("⚠️ Не удалось обработать предупреждение")
 
             # Если URL содержит SecurityWarning — значит мы на странице предупреждения
             if "SecurityWarning" in current_url or "securityWarning" in current_url.lower():
