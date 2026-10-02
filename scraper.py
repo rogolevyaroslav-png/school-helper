@@ -119,16 +119,38 @@ def main():
         submit_btn.click()
         time.sleep(8)
 
-        # 9.1. Проверяем, не появилось ли предупреждение о другом пользователе
+              # 9.1. Проверяем предупреждение о другом пользователе
         print("--- Проверяем предупреждение ---")
-        try:
-            # Ищем кнопку "Продолжить" (на случай, если уже кто-то залогинен)
-            continue_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Продолжить')]")
-            print("⚠️ Появилось предупреждение. Нажимаем 'Продолжить'...")
-            continue_btn.click()
-            time.sleep(5)
-        except:
-            print("✅ Предупреждения нет, продолжаем")
+        time.sleep(3)
+        
+        warning_clicked = False
+        # Пробуем разные способы найти кнопку "Продолжить"
+        selectors = [
+            (By.XPATH, "//input[@value='Продолжить']"),
+            (By.XPATH, "//input[@value='Continue']"),
+            (By.XPATH, "//button[contains(text(), 'Продолжить')]"),
+            (By.XPATH, "//a[contains(text(), 'Продолжить')]"),
+            (By.XPATH, "//*[contains(text(), 'Продолжить')]"),
+        ]
+        
+        for by, sel in selectors:
+            try:
+                btn = driver.find_element(by, sel)
+                btn.click()
+                print(f"✅ Нажали 'Продолжить' ({sel})")
+                warning_clicked = True
+                time.sleep(8)
+                break
+            except:
+                continue
+        
+        if not warning_clicked:
+            print("✅ Предупреждения не было — продолжаем")
+        
+        # Делаем скриншот после нажатия
+        with open("debug_after_warning.html", "w", encoding="utf-8") as f:
+            f.write(driver.page_source)
+        print("💾 Сохранён debug_after_warning.html")
 
         # 10. Сохраняем HTML после входа
         with open("debug_after_login.html", "w", encoding="utf-8") as f:
