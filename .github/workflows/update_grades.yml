@@ -35,6 +35,11 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add grades.csv
-          git diff --staged --quiet || git commit -m "Обновление оценок"
-          git push
+          if [ -f grades.csv ]; then
+            git add grades.csv
+            git diff --staged --quiet || git commit -m "Обновление оценок"
+            git push
+            echo "✅ grades.csv обновлён"
+          else
+            echo "⚠️ grades.csv не создан — пропускаем коммит"
+          fi
