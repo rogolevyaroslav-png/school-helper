@@ -31,18 +31,16 @@ jobs:
           DNEVNIK_PASSWORD: ${{ secrets.DNEVNIK_PASSWORD }}
         run: python scraper.py
 
-           - name: Commit and push changes
+      - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Коммитим grades.csv, если создан
           if [ -f grades.csv ]; then
             git add grades.csv
             echo "✅ grades.csv найден"
           fi
           
-          # Коммитим debug-файлы для отладки
           for f in debug_main.html debug_after_login.html debug_grades.html debug_error.html; do
             if [ -f "$f" ]; then
               git add "$f"
@@ -50,6 +48,5 @@ jobs:
             fi
           done
           
-          # Коммитим и пушим
           git diff --staged --quiet || git commit -m "Обновление данных"
           git push || echo "Нечего пушить"
