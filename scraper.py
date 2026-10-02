@@ -6,6 +6,7 @@ import time
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -56,10 +57,6 @@ def main():
         select_by_js(driver, "schools", "3")
         time.sleep(3)
 
-        with open("debug_after_region.html", "w", encoding="utf-8") as f:
-            f.write(driver.page_source)
-        print("💾 debug_after_region.html")
-
         print("--- Вводим логин/пароль ---")
         form_block = wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, ".box-form.visible")
@@ -79,169 +76,117 @@ def main():
         submit_btn.click()
         time.sleep(10)
 
-          # === ОБРАБОТКА ПРЕДУПРЕЖДЕНИЯ ===
-        print("--- Ждём появления предупреждения (5 сек) ---")
-        time.sleep(5)
+        # === ОБРАБОТКА ПРЕДУПРЕЖДЕНИЯ ===
+        print("--- Обрабатываем предупреждение ---")
+        time.sleep(3)
 
         warning_handled = False
-        for attempt in range(1, 16):  # 15 попыток
-            print(f"  Попытка {attempt}: URL = {driver.current_url}")
+        for attempt in range(1, 11):
+            url_now = driver.current_url
+            print(f"  Попытка {attempt}: URL = {url_now}")
 
-            # Проверяем, что мы на странице предупреждения
-            if "SecurityWarning" not in driver.current_url:
-                print("  ✅ Уже не на предупреждении — идём дальше")
+            if "SecurityWarning" not in url_now:
+                print("  ✅ Уже не на предупреждении")
                 warning_handled = True
                 break
 
-            # Сохраняем HTML для отладки (только при первой попытке)
             if attempt == 1:
                 with open("debug_warning.html", "w", encoding="utf-8") as f:
                     f.write(driver.page_source)
                 print("  💾 debug_warning.html сохранён")
 
-            # Способ 1: найти ВСЕ элементы с текстом "Продолжить" и кликнуть через JS
-            try:
-                elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Продолжить')]")
-                print(f"  Найдено элементов с 'Продолжить': {len(elements)}")
-                if elements:
-                    driver.execute_script("arguments[0].click();", elements[0])
-                    print("  ✅ Кликнули через JS")
-                    time.sleep(8)
-                    continue
-            except Exception as e:
-                print(f"  Способ 1 не сработал: {e}")
+            # === Ищем ссылку "Продолжить" ===
+            clicked = False
 
-            # Способ 2: найти input с value='Продолжить'
-            try:
-                btn = driver.find_element(By.XPATH, "//input[@value='Продолжить']")
-                driver.execute_script("arguments[0].click();", btn)
-                print("  ✅ Кликнули input через JS")
-                time.sleep(8)
-                continue
-            except:
-                pass
-
-            # Способ 3: найти любую кнопку/ссылку рядом с текстом
+            # Способ 1: найти <a> с текстом "Продолжить" и взять href
             try:
                 links = driver.find_elements(By.TAG_NAME, "a")
                 for link in links:
-                    if "Продолжить" in link.text:
-                        driver.execute_script("arguments[0].click();", link)
-                        print(f"  ✅ Кликнули ссылку: {link.text}")
-                        time.sleep(8)
-                        break
-                else:
-                    raise Exception("Ссылка не найдена")
-                continue
-            except:
-                pass
+                    text = (link.text or "").strip()
+                    if "Продолжить" in text or "Continue" in text:
+                        href = link.get_attribute("href") or ""
+                        print(f"  Найдена ссылка '{text}', href='{href}'")
+                        if href and href.startswith("http") and "javascript" not in href:
+                            print(f"  ✅ Переходим по href: {href}")
+                            driver.get(href)
+                            clicked = True
+                            time.sleep(8)
+                            break
+                        else:
+                            print("  ✅ Кликаем ссылку через JS")
+                            driver.execute_script("arguments[0].click();", link)
+                            clicked = True
+                            time.sleep(8)
+                            break
+            except Exception as e:
+                print(f"  Способ 1 ошибка: {e}")
 
-            # Способ 4: отправить форму напрямую
-            try:
-                forms = driver.find_elements(By.TAG_NAME, "form")
-                if forms:
-                    driver.execute_script("arguments[0].submit();", forms[0])
-                    print("  ✅ Отправили форму")
+            # Способ 2: input[value='Продолжить']
+            if not clicked:
+                try:
+                    btn = driver.find_element(By.XPATH, "//input[@value='Продолжить']")
+                    print("  ✅ Кликнули input через JS")
+                    driver.execute_script("arguments[0].click();", btn)
+                    clicked = True
                     time.sleep(8)
-                    continue
-            except:
-                pass
-
-            # Способ 5: нажать Enter на body
-            try:
-                from selenium.webdriver.common.keys import Keys
-                body = driver.find_element(By.TAG_NAME, "body")
-                body.send_keys(Keys.ENTER)
-                print("  ✅ Нажали Enter")
-                time.sleep(5)
-            except:
-                pass
-
-            time.sleep(2)
-
-        if not warning_handled:
-            print("⚠️ Не удалось обработать предупреждение")
-
-            # Если URL содержит SecurityWarning — значит мы на странице предупреждения
-            if "SecurityWarning" in current_url or "securityWarning" in current_url.lower():
-                print("  ⚠️ Обнаружена страница предупреждения!")
-                
-                # Пробуем найти кнопку "Продолжить"
-                try:
-                    continue_btn = driver.find_element(
-                        By.XPATH, "//input[@value='Продолжить']"
-                    )
-                    print("  ✅ Нашли 'Продолжить'. Нажимаем...")
-                    continue_btn.click()
-                    warning_handled = True
-                    time.sleep(10)
-                    print(f"  ✅ После нажатия URL: {driver.current_url}")
-                    break
                 except:
                     pass
 
-                # Если не нашли — пробуем "Выход"
+            # Способ 3: любые элементы с текстом
+            if not clicked:
                 try:
-                    exit_btn = driver.find_element(
-                        By.XPATH, "//input[@value='Выход']"
-                    )
-                    print("  ⚠️ 'Продолжить' не нашли, нажимаем 'Выход'...")
-                    exit_btn.click()
-                    warning_handled = True
-                    time.sleep(10)
-                    # После "Выход" нужно залогиниться заново
-                    print("  Повторный логин...")
-                    form_block = wait.until(EC.presence_of_element_located(
-                        (By.CSS_SELECTOR, ".box-form.visible")
-                    ))
-                    login_field = form_block.find_element(By.NAME, "UN")
-                    password_field = form_block.find_element(By.NAME, "PW")
-                    login_field.clear()
-                    login_field.send_keys(login)
-                    password_field.clear()
-                    password_field.send_keys(password)
-                    submit_btn = form_block.find_element(By.CSS_SELECTOR, ".button-login-marker")
-                    submit_btn.click()
-                    time.sleep(10)
-                    break
+                    elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Продолжить')]")
+                    if elements:
+                        print(f"  ✅ Кликнули элемент #{len(elements)} через JS")
+                        driver.execute_script("arguments[0].click();", elements[0])
+                        clicked = True
+                        time.sleep(8)
                 except:
                     pass
 
-            # Если URL не похож на предупреждение — возможно, мы уже вошли
-            if "SecurityWarning" not in current_url and "about" not in current_url:
-                print("  ✅ Похоже, мы уже вошли. Идём дальше.")
-                warning_handled = True
-                break
+            # Способ 4: submit формы
+            if not clicked:
+                try:
+                    forms = driver.find_elements(By.TAG_NAME, "form")
+                    if forms:
+                        print("  ✅ Отправили форму через JS")
+                        driver.execute_script("arguments[0].submit();", forms[0])
+                        clicked = True
+                        time.sleep(8)
+                except:
+                    pass
+
+            # Способ 5: Enter
+            if not clicked:
+                try:
+                    body = driver.find_element(By.TAG_NAME, "body")
+                    body.send_keys(Keys.ENTER)
+                    print("  ✅ Нажали Enter")
+                    time.sleep(5)
+                except:
+                    pass
 
             time.sleep(2)
 
-        if not warning_handled:
-            print("⚠️ Предупреждение не обнаружено — возможно, всё в порядке")
+        print(f"--- После предупреждения URL: {driver.current_url}")
 
-        # Сохраняем HTML после входа
         with open("debug_after_login.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
-        print(f"💾 debug_after_login.html | URL: {driver.current_url}")
+        print(f"💾 debug_after_login.html")
 
-        # Проверяем на ошибку авторизации
         if "Неправильный пароль или логин" in driver.page_source:
             print("❌ ОШИБКА АВТОРИЗАЦИИ!")
             return
 
-        # === ИЩЕМ ССЫЛКИ В МЕНЮ ===
-        print("--- Ищем меню дневника ---")
-        time.sleep(5)
-
-        # Сначала попробуем прямой URL
-        print("Пробуем прямой URL отчётов...")
+        # === ОТЧЁТЫ ===
+        print("--- Открываем отчёты ---")
         driver.get("http://drzd.ru/angular/school/reports/studenttotal")
-        time.sleep(10)
+        time.sleep(12)
 
         with open("debug_grades.html", "w", encoding="utf-8") as f:
             f.write(driver.page_source)
         print(f"💾 debug_grades.html | URL: {driver.current_url}")
 
-        # Собираем оценки
         print("--- Собираем оценки ---")
         grades_data = []
 
