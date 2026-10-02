@@ -113,13 +113,22 @@ def main():
         time.sleep(1)
         print("✅ Пароль введён")
 
-        # 9. Нажимаем "Войти"
+              # 9. Нажимаем "Войти"
         print("\n--- Нажимаем 'Войти' ---")
         submit_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Войти')]")
         submit_btn.click()
-        time.sleep(10)
+        time.sleep(8)
 
-        print(f"Текущий URL после входа: {driver.current_url}")
+        # 9.1. Проверяем, не появилось ли предупреждение о другом пользователе
+        print("--- Проверяем предупреждение ---")
+        try:
+            # Ищем кнопку "Продолжить" (на случай, если уже кто-то залогинен)
+            continue_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Продолжить')]")
+            print("⚠️ Появилось предупреждение. Нажимаем 'Продолжить'...")
+            continue_btn.click()
+            time.sleep(5)
+        except:
+            print("✅ Предупреждения нет, продолжаем")
 
         # 10. Сохраняем HTML после входа
         with open("debug_after_login.html", "w", encoding="utf-8") as f:
