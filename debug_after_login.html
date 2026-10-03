@@ -36,7 +36,7 @@
 	
 	<script type="text/javascript">
 		var appContext = {
-			now: "02.10.2026 20:08:31",
+			now: "03.10.2026 16:50:55",
 			productName: "Сетевой Город. Образование",
 			version: "5.23.69340",
 			serverId: "A440B6DF-2A1D-4CAF-9E43-8445BE086CB1",
@@ -48,17 +48,17 @@
 	</script>
 		
 		<script type="text/javascript">
-			var strATTok = "02205639265684987955177414";
+			var strATTok = "02249639266430553177349393";
 			var bReadonly = false;
 			var kLoginPage = "/";
-			var pageVer = 1790971711;
+			var pageVer = 1791046255;
 			var wasSavedMsg = "";
 		
 		</script>
 		
 	<script type="text/javascript">
 		(function() {
-			appContext.at = "02205639265684987955177414";
+			appContext.at = "02249639266430553177349393";
 			appContext.readOnly = false;
 			appContext.funcType = 2;
 			appContext.language = "RU";
@@ -185,7 +185,7 @@
 		<!--блок правая половина "шапки"-->
 		<div class="block-personal-cabinet">
 			<div class="number-employees-in-system hidden-scr-sm hidden-scr-xs">
-				<p>2 октября 2026 г. - В системе работает <span class="number-employees-span" id="WorkingInSystemCnt">54795</span>
+				<p>3 октября 2026 г. - В системе работает <span class="number-employees-span" id="WorkingInSystemCnt">3729</span>
 					<a href="#" type="button" onclick="UpdateWorkInSystemCnt()" title="Список пользователей в сети">
 						<span class="glyphicon glyphicon-user"></span>
 						<span class="glyphicon glyphicon-user"></span>
@@ -330,7 +330,7 @@
 	
 	<div>
 		<form name="refreshfix" method="post" class="hidden ng-pristine ng-valid">
-			<input type="hidden" name="at" value="02205639265684987955177414" autocomplete="off">
+			<input type="hidden" name="at" value="02249639266430553177349393" autocomplete="off">
 			<input type="hidden" name="baseurl" value="school/main" autocomplete="off">
 			<input type="hidden" name="route" value="/" autocomplete="off">
 			<input type="hidden" name="TabItem" value="0" autocomplete="off">
@@ -387,31 +387,23 @@
 						</div>
 					</div>
 					<div class="img-content"><div class="el-decor"></div></div>
-				</div><div ng-show="$ctrl.isVisible($ctrl.screenElementTypes.announcements)" class="one-one item ads ui-sortable-handle" id="2" ng-class="{empty_ads_b: !$ctrl.data.announcements.length}">
+				</div><div ng-show="$ctrl.isVisible($ctrl.screenElementTypes.announcements)" class="one-one item ads ui-sortable-handle empty_ads_b" id="2" ng-class="{empty_ads_b: !$ctrl.data.announcements.length}">
 					<div class="head header-border-green">
 						<i class="mdi mdi-file-document-box"></i>
 						Объявления
 					</div>
 					<div class="wrap-content foot-active">
 
-						<!-- ngRepeat: announce in $ctrl.data.announcements --><!-- ngIf: $ctrl.data.announcements.length --><div class="block-content ng-scope" ng-repeat="announce in $ctrl.data.announcements" ng-if="$ctrl.data.announcements.length">
-							<div class="wrap-img"></div>
-							<div class="item-content">
-								<h2 class="ng-binding">Школьный этап ВсОШ по ФИЗИКЕ 2 октября 2026</h2>
-								<div class="ng-binding" ng-bind-html="announce.description | trusted"><p>Внимание!&nbsp;</p>
-<p>Сегодня <strong><span style="color: #ff0000;">2 октября 2026 г.</span></strong>&nbsp;проходит школьный этап Всероссийской олимпиады школьников (ВсОШ)&nbsp;по&nbsp;<strong><span style="color: #ff0000;">ФИЗИКЕ</span></strong> для <strong>7-11 классов</strong>!&nbsp;</p>
-<p>Олимпиада проходит на технологической платформе&nbsp;<strong>«Сириус. Курсы»</strong>,&nbsp;с <strong>8.00 до 22.00</strong> по местному времени.</p>
-<p>Для прохождения олимпиады <span style="background-color: #00ffff;"><strong>необходимо&nbsp;ввести код</strong></span>&nbsp;(выданы классным руководителям) по ссылке&nbsp;<span style="background-color: #00ffff;"><strong><a href="https://uts.sirius.online/" target="_blank">uts.sirius.online</a>&nbsp;</strong></span>(не ранее чем за 1,5 часа до начала тура).</p>
-<p><em><strong>Продолжительность тура</strong></em> – <em><strong>90 минут для всех классов с 7 по 11 кл.</strong></em></p>
-<p>При выполнении заданий олимпиады разрешено использовать непрограммируемый калькулятор.</p>
-<p>Более подробная информация на сайте нашего лицея в разделе "ВсОШ": <strong><a href="http://licey-14.ru/vsosh/index.php?dn=pages&amp;pa=vsosh&amp;cpu=vserossijskaya-olimpiada-shkolnikov" target="_blank">http://licey-14.ru/vsosh/index.php?dn=pages&amp;pa=vsosh&amp;cpu=vserossijskaya-olimpiada-shkolnikov</a></strong></p>
-<p>По всем организационным вопросам обращаться в каб.77 (ЦНИР), тел.63-29-20 (доб.114)</p>
-<p>Желаем успехов в написании олимпиады!</p></div>
-								<a href="#" class="read-more">Подробнее</a>
-							</div>
-						</div><!-- end ngIf: $ctrl.data.announcements.length --><!-- end ngRepeat: announce in $ctrl.data.announcements -->
+						<!-- ngRepeat: announce in $ctrl.data.announcements -->
 
-						<!-- ngIf: !$ctrl.data.announcements.length -->
+						<!-- ngIf: !$ctrl.data.announcements.length --><div class="block-content ng-scope" ng-if="!$ctrl.data.announcements.length">
+							<div class="wrap-img"></div>
+							<div class="anounce_content">
+								<h2>Нет объявлений</h2>
+								<div class="text"></div>
+								<!--<a href="#" class="read-more"> </a>-->
+							</div>
+						</div><!-- end ngIf: !$ctrl.data.announcements.length -->
 
 					</div>
 					<div class="wrap-foot">
@@ -712,8 +704,8 @@
 	<form name="MenuForm" method="POST" class="ng-pristine ng-valid">
 		
 	<input type="hidden" name="LoginType" value="0" autocomplete="off">
-	<input type="hidden" name="AT" value="02205639265684987955177414" autocomplete="off">
-	<input type="hidden" name="VER" value="1790971711" autocomplete="off"><input type="hidden" name="MenuItem" value="0" autocomplete="off"><input type="hidden" name="TabItem" value="0" autocomplete="off"><input type="hidden" name="optional" value="optional" autocomplete="off">
+	<input type="hidden" name="AT" value="02249639266430553177349393" autocomplete="off">
+	<input type="hidden" name="VER" value="1791046255" autocomplete="off"><input type="hidden" name="MenuItem" value="0" autocomplete="off"><input type="hidden" name="TabItem" value="0" autocomplete="off"><input type="hidden" name="optional" value="optional" autocomplete="off">
 	</form>
 	<link rel="stylesheet" type="text/css" href="/vendor/eternicode-bootstrap-datepicker/css/datepicker_build.min.css?ver=5.23.69340">
 	<script src="/vendor/eternicode-bootstrap-datepicker/js/bootstrap-datepicker.js?ver=5.23.69340" type="text/javascript"></script>
