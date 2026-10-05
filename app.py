@@ -314,9 +314,49 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # === МАРШРУТ С ГЕОЛОКАЦИЕЙ ===
+      # === МАРШРУТ С ГЕОЛОКАЦИЕЙ ===
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<div class="card-title">🗺️ Дорога до школы</div>', unsafe_allow_html=True)
+    
+    # Кнопка "Определить моё местоположение"
+    col_btn1, col_btn2 = st.columns([3, 1])
+    with col_btn2:
+        detect = st.button("📍 Определить", key="btn_detect_location")
+    
+    # Определяем локацию
+    if detect:
+        with st.spinner("Определяем твоё местоположение..."):
+            user_loc = get_user_location()
+        
+        st.info(user_loc['source'])
+        
+        duration, distance = get_route(
+            user_loc['lat'], user_loc['lon'],
+            SCHOOL_LAT, SCHOOL_LON
+        )
+    else:
+        st.caption("Нажми «Определить», чтобы построить маршрут от твоего текущего местоположения. Пока используется адрес из настроек.")
+        duration, distance = get_route(HOME_LAT, HOME_LON, SCHOOL_LAT, SCHOOL_LON)
+    
+    if duration:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"""
+            <div class="metric-card metric-purple">
+                <p class="metric-value">{duration:.0f} мин</p>
+                <p class="metric-label">⏱ Время в пути</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"""
+            <div class="metric-card metric-orange">
+                <p class="metric-value">{distance:.1f} км</p>
+                <p class="metric-label">📏 Расстояние</p>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.warning("Не удалось построить маршрут.")
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Кнопка "Определить моё местоположение"
     col_btn1, col_btn2 = st.columns([3, 1])
