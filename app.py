@@ -182,7 +182,7 @@ st.markdown("""
 
 # --- ФУНКЦИИ ---
 def get_weather(lat, lon):
-    """Погода через Open-Meteo (бесплатно, без ключа)."""
+    """Погода через Open-Meteo."""
     url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
     try:
         r = requests.get(url, timeout=10)
@@ -194,7 +194,7 @@ def get_weather(lat, lon):
 
 
 def get_route(start_lat, start_lon, end_lat, end_lon):
-    """Маршрут через OSRM (бесплатно, без ключа)."""
+    """Маршрут через OSRM."""
     url = f"http://router.project-osrm.org/route/v1/driving/{start_lon},{start_lat};{end_lon},{end_lat}?overview=false"
     try:
         r = requests.get(url, timeout=10)
@@ -210,7 +210,7 @@ def get_route(start_lat, start_lon, end_lat, end_lon):
 
 
 def get_location_by_ip():
-    """Определяет примерную локацию по IP-адресу."""
+    """Локация по IP."""
     try:
         r = requests.get("http://ip-api.com/json/", timeout=5)
         if r.status_code == 200:
@@ -228,12 +228,7 @@ def get_location_by_ip():
 
 
 def get_user_location():
-    """
-    Гибридное определение локации:
-    1. Браузерная геолокация (точно)
-    2. IP-адрес (примерно)
-    3. Координаты из кода (запасной)
-    """
+    """Гибридное определение локации."""
     # Способ 1: браузер
     try:
         from streamlit_js_eval import get_geolocation
@@ -314,60 +309,15 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-      # === МАРШРУТ С ГЕОЛОКАЦИЕЙ ===
+    # === МАРШРУТ С ГЕОЛОКАЦИЕЙ ===
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<div class="card-title">🗺️ Дорога до школы</div>', unsafe_allow_html=True)
     
-    # Кнопка "Определить моё местоположение"
     col_btn1, col_btn2 = st.columns([3, 1])
     with col_btn2:
         detect = st.button("📍 Определить", key="btn_detect_location")
     
-    # Определяем локацию
     if detect:
-        with st.spinner("Определяем твоё местоположение..."):
-            user_loc = get_user_location()
-        
-        st.info(user_loc['source'])
-        
-        duration, distance = get_route(
-            user_loc['lat'], user_loc['lon'],
-            SCHOOL_LAT, SCHOOL_LON
-        )
-    else:
-        st.caption("Нажми «Определить», чтобы построить маршрут от твоего текущего местоположения. Пока используется адрес из настроек.")
-        duration, distance = get_route(HOME_LAT, HOME_LON, SCHOOL_LAT, SCHOOL_LON)
-    
-    if duration:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown(f"""
-            <div class="metric-card metric-purple">
-                <p class="metric-value">{duration:.0f} мин</p>
-                <p class="metric-label">⏱ Время в пути</p>
-            </div>
-            """, unsafe_allow_html=True)
-        with col2:
-            st.markdown(f"""
-            <div class="metric-card metric-orange">
-                <p class="metric-value">{distance:.1f} км</p>
-                <p class="metric-label">📏 Расстояние</p>
-            </div>
-            """, unsafe_allow_html=True)
-    else:
-        st.warning("Не удалось построить маршрут.")
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Кнопка "Определить моё местоположение"
-    col_btn1, col_btn2 = st.columns([3, 1])
-    with col_btn2:
-        if st.button("📍 Определить", key="detect_location"):
-            st.session_state.detect_location = True
-    
-    # Определяем локацию
-    use_geolocation = st.session_state.get('detect_location', False)
-    
-    if use_geolocation:
         with st.spinner("Определяем твоё местоположение..."):
             user_loc = get_user_location()
         
@@ -445,7 +395,6 @@ with tab2:
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Статистика
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📈 Статистика</div>', unsafe_allow_html=True)
         
@@ -476,7 +425,6 @@ with tab2:
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Графики
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📉 Динамика по предметам</div>', unsafe_allow_html=True)
         pivot = df.pivot_table(index='date', columns='subject', values='grade', aggfunc='mean')
@@ -524,7 +472,6 @@ with tab3:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Показ расписания
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<div class="card-title">📖 Твоё расписание</div>', unsafe_allow_html=True)
     
