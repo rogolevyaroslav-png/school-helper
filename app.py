@@ -33,7 +33,7 @@ st.markdown("""
     }
     
     .stApp {
-        background: #f7f8fc;
+        background: #ffffff;
     }
     
     .main .block-container {
@@ -91,34 +91,33 @@ st.markdown("""
     }
     
     .stat-box {
-        background: white;
-        border: 1px solid #e8eaf0;
-        border-radius: 12px;
-        padding: 1.35rem 1.25rem;
+        background: #fafafa;
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        padding: 1.5rem 1.25rem;
         text-align: left;
         animation: scaleIn 0.5s ease-out;
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+        transition: background 0.25s ease, border-color 0.25s ease;
     }
     
     .stat-box:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(59, 91, 219, 0.08);
-        border-color: #c7d0ff;
+        background: #f5f5f5;
+        border-color: #d4d4d4;
     }
     
     .stat-value {
-        font-size: 1.85rem;
+        font-size: 3.2rem;
         font-weight: 700;
         color: #3b5bdb;
         margin: 0;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
     }
     
     .stat-label {
         font-size: 0.78rem;
         color: #697386;
-        margin-top: 0.4rem;
+        margin-top: 0.5rem;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -127,11 +126,11 @@ st.markdown("""
     .stat-box::before {
         content: '';
         display: block;
-        width: 32px;
-        height: 3px;
-        background: #3b5bdb;
-        border-radius: 2px;
-        margin-bottom: 0.9rem;
+        width: 28px;
+        height: 2px;
+        background: #d4d4d4;
+        border-radius: 1px;
+        margin-bottom: 0.75rem;
     }
     
     .stTabs [data-baseweb="tab-list"] {
@@ -394,7 +393,7 @@ with tab2:
             best = df.groupby('subject')['grade'].mean().idxmax()
             st.markdown(f"""
             <div class="stat-box">
-                <p class="stat-value" style="font-size:1.2rem;">{best}</p>
+                <p class="stat-value" style="font-size:1.8rem;">{best}</p>
                 <p class="stat-label">Лучший предмет</p>
             </div>
             """, unsafe_allow_html=True)
@@ -402,7 +401,6 @@ with tab2:
         st.write("")
         st.markdown('<div class="section-title">📉 Динамика по четвертям</div>', unsafe_allow_html=True)
         
-        # Определяем четверть по месяцу
         def get_quarter(month):
             if month in [9, 10]:
                 return '1 четверть'
@@ -417,16 +415,10 @@ with tab2:
         
         df['quarter'] = df['date'].dt.month.apply(get_quarter)
         
-        # Порядок четвертей
         quarter_order = ['1 четверть', '2 четверть', '3 четверть', '4 четверть']
-        
-        # Средний балл по четвертям
         avg_by_quarter = df.groupby('quarter')['grade'].mean().reindex(quarter_order).dropna()
-        
-        # Общий средний балл
         overall_avg = df['grade'].mean()
         
-        # Большая карточка с общим средним
         col1, col2 = st.columns([1, 3])
         with col1:
             st.markdown(f"""
@@ -436,7 +428,6 @@ with tab2:
             </div>
             """, unsafe_allow_html=True)
         
-        # Цвета для четвертей
         quarter_colors = {
             '1 четверть': '#3b5bdb',
             '2 четверть': '#0ea5e9',
@@ -460,7 +451,6 @@ with tab2:
             width=0.5,
         ))
         
-        # Линия общего среднего
         fig.add_hline(
             y=overall_avg,
             line_dash='dash',
