@@ -401,6 +401,8 @@ with tab2:
         
         st.write("")
         st.markdown('<div class="section-title">📉 Динамика</div>', unsafe_allow_html=True)
+        
+        # Группируем по дате и предмету
         pivot = df.pivot_table(index='date', columns='subject', values='grade', aggfunc='mean')
         
         colors = [
@@ -411,21 +413,13 @@ with tab2:
         fig = go.Figure()
         
         for i, subject in enumerate(pivot.columns):
-            fig.add_trace(go.Scatter(
+            fig.add_trace(go.Bar(
                 x=pivot.index,
                 y=pivot[subject],
-                mode='lines+markers',
                 name=subject,
-                line=dict(
-                    color=colors[i % len(colors)],
-                    width=2.5,
-                    shape='spline',
-                    smoothing=1.0,
-                ),
                 marker=dict(
-                    size=7,
                     color=colors[i % len(colors)],
-                    line=dict(color='white', width=1.5),
+                    line=dict(color='white', width=1),
                 ),
                 hovertemplate='<b>%{fullData.name}</b><br>' +
                               'Дата: %{x|%d.%m.%Y}<br>' +
@@ -433,10 +427,13 @@ with tab2:
             ))
         
         fig.update_layout(
-            height=380,
+            height=400,
             margin=dict(l=10, r=10, t=20, b=10),
             paper_bgcolor='white',
             plot_bgcolor='white',
+            barmode='group',
+            bargap=0.25,
+            bargroupgap=0.08,
             font=dict(family='Inter, sans-serif', size=12, color='#697386'),
             hoverlabel=dict(
                 bgcolor='white',
@@ -459,6 +456,7 @@ with tab2:
                 ticks='outside',
                 tickcolor='#e8eaf0',
                 tickfont=dict(size=11, color='#9ca3af'),
+                type='category',
             ),
             yaxis=dict(
                 showgrid=True,
@@ -466,7 +464,7 @@ with tab2:
                 gridwidth=1,
                 showline=False,
                 tickfont=dict(size=11, color='#9ca3af'),
-                range=[1.8, 5.2],
+                range=[0, 5.5],
                 dtick=1,
             ),
         )
