@@ -400,54 +400,88 @@ with tab2:
             """, unsafe_allow_html=True)
         
         st.write("")
-        st.markdown('<div class="section-title">📉 Динамика</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">📉 Динамика по четвертям</div>', unsafe_allow_html=True)
         
-        # Группируем по дате и предмету
-        pivot = df.pivot_table(index='date', columns='subject', values='grade', aggfunc='mean')
+        # Определяем четверть по месяцу
+        def get_quarter(month):
+            if month in [9, 10]:
+                return '1 четверть'
+            elif month in [11, 12]:
+                return '2 четверть'
+            elif month in [1, 2, 3]:
+                return '3 четверть'
+            elif month in [4, 5]:
+                return '4 четверть'
+            else:
+                return 'Лето'
         
-        colors = [
-            '#3b5bdb', '#0ea5e9', '#10b981', '#8b5cf6', '#f59e0b',
-            '#ef4444', '#14b8a6', '#ec4899', '#6366f1', '#84cc16',
-        ]
+        df['quarter'] = df['date'].dt.month.apply(get_quarter)
+        
+        # Порядок четвертей
+        quarter_order = ['1 четверть', '2 четверть', '3 четверть', '4 четверть']
+        
+        # Средний балл по четвертям
+        avg_by_quarter = df.groupby('quarter')['grade'].mean().reindex(quarter_order).dropna()
+        
+        # Общий средний балл
+        overall_avg = df['grade'].mean()
+        
+        # Большая карточка с общим средним
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.markdown(f"""
+            <div class="stat-box">
+                <p class="stat-value">{overall_avg:.2f}</p>
+                <p class="stat-label">Общий средний балл</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Цвета для четвертей
+        quarter_colors = {
+            '1 четверть': '#3b5bdb',
+            '2 четверть': '#0ea5e9',
+            '3 четверть': '#10b981',
+            '4 четверть': '#8b5cf6',
+        }
         
         fig = go.Figure()
         
-        for i, subject in enumerate(pivot.columns):
-            fig.add_trace(go.Bar(
-                x=pivot.index,
-                y=pivot[subject],
-                name=subject,
-                marker=dict(
-                    color=colors[i % len(colors)],
-                    line=dict(color='white', width=1),
-                ),
-                hovertemplate='<b>%{fullData.name}</b><br>' +
-                              'Дата: %{x|%d.%m.%Y}<br>' +
-                              'Оценка: %{y}<extra></extra>',
-            ))
+        fig.add_trace(go.Bar(
+            x=avg_by_quarter.index,
+            y=avg_by_quarter.values,
+            marker=dict(
+                color=[quarter_colors.get(q, '#3b5bdb') for q in avg_by_quarter.index],
+                line=dict(color='white', width=1),
+            ),
+            text=[f"{v:.2f}" for v in avg_by_quarter.values],
+            textposition='outside',
+            textfont=dict(size=13, color='#1a1f36', family='Inter'),
+            hovertemplate='<b>%{x}</b><br>Средний балл: %{y:.2f}<extra></extra>',
+            width=0.5,
+        ))
+        
+        # Линия общего среднего
+        fig.add_hline(
+            y=overall_avg,
+            line_dash='dash',
+            line_color='#ef4444',
+            line_width=1.5,
+            annotation_text=f'Общий средний: {overall_avg:.2f}',
+            annotation_position='top right',
+            annotation_font=dict(size=11, color='#ef4444', family='Inter'),
+        )
         
         fig.update_layout(
             height=400,
-            margin=dict(l=10, r=10, t=20, b=10),
+            margin=dict(l=10, r=10, t=30, b=10),
             paper_bgcolor='white',
             plot_bgcolor='white',
-            barmode='group',
-            bargap=0.25,
-            bargroupgap=0.08,
+            showlegend=False,
             font=dict(family='Inter, sans-serif', size=12, color='#697386'),
             hoverlabel=dict(
                 bgcolor='white',
                 bordercolor='#e8eaf0',
                 font=dict(color='#1a1f36', size=12, family='Inter'),
-            ),
-            legend=dict(
-                orientation='h',
-                yanchor='bottom',
-                y=1.02,
-                xanchor='left',
-                x=0,
-                bgcolor='rgba(0,0,0,0)',
-                font=dict(size=11, color='#697386'),
             ),
             xaxis=dict(
                 showgrid=False,
@@ -455,8 +489,7 @@ with tab2:
                 linecolor='#e8eaf0',
                 ticks='outside',
                 tickcolor='#e8eaf0',
-                tickfont=dict(size=11, color='#9ca3af'),
-                type='category',
+                tickfont=dict(size=12, color='#697386', family='Inter'),
             ),
             yaxis=dict(
                 showgrid=True,
