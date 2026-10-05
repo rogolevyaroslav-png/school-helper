@@ -61,7 +61,7 @@ st.markdown("""
         background: white;
         padding: 2rem 2rem;
         border-radius: 16px;
-        border: 1px solid #e8eaf0;
+        border: 1px solid #d4d4d8;
         box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
         margin-bottom: 1.5rem;
         animation: slideIn 0.6s ease-out;
@@ -86,13 +86,15 @@ st.markdown("""
         font-weight: 600;
         color: #1a1f36;
         margin: 1.5rem 0 1rem 0;
+        padding-bottom: 0.6rem;
         letter-spacing: -0.01em;
+        border-bottom: 1px solid #eaeaea;
         animation: slideIn 0.5s ease-out;
     }
     
     .stat-box {
         background: #fafafa;
-        border: 1px solid #eaeaea;
+        border: 1px solid #d4d4d8;
         border-radius: 8px;
         padding: 1.5rem 1.25rem;
         text-align: left;
@@ -102,7 +104,7 @@ st.markdown("""
     
     .stat-box:hover {
         background: #f5f5f5;
-        border-color: #d4d4d4;
+        border-color: #b8b8bd;
     }
     
     .stat-value {
@@ -134,27 +136,27 @@ st.markdown("""
     }
     
     .stTabs [data-baseweb="tab-list"] {
-        gap: 0.25rem;
-        background: white;
-        padding: 0.35rem;
+        gap: 0.35rem;
+        background: #f0f2f7;
+        padding: 0.4rem;
         border-radius: 10px;
-        border: 1px solid #e8eaf0;
+        border: none;
         animation: fadeIn 0.5s ease-out;
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
         border-radius: 7px;
-        padding: 0.5rem 1.1rem;
+        padding: 0.55rem 1.2rem;
         font-weight: 500;
-        color: #697386;
+        color: #4b5563;
         font-size: 0.9rem;
         transition: all 0.2s ease;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
         color: #3b5bdb;
-        background: #f0f3ff;
+        background: #e8ecff;
     }
     
     .stTabs [aria-selected="true"] {
@@ -167,17 +169,17 @@ st.markdown("""
         color: white;
         border: none;
         border-radius: 8px;
-        padding: 0.55rem 1.35rem;
-        font-weight: 500;
+        padding: 0.6rem 1.4rem;
+        font-weight: 600;
         font-size: 0.9rem;
         transition: all 0.25s ease;
-        box-shadow: 0 1px 2px rgba(59, 91, 219, 0.2);
+        box-shadow: 0 2px 6px rgba(59, 91, 219, 0.3);
     }
     
     .stButton > button:hover {
         background: #2f4bc4;
         transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(59, 91, 219, 0.28);
+        box-shadow: 0 6px 16px rgba(59, 91, 219, 0.4);
     }
     
     .stButton > button:active {
@@ -188,6 +190,7 @@ st.markdown("""
     .stDateInput input,
     .stSelectbox div[data-baseweb="select"] > div {
         border-radius: 8px !important;
+        border: 1px solid #d4d4d8 !important;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     
@@ -199,7 +202,7 @@ st.markdown("""
     
     .stAlert {
         border-radius: 10px;
-        border: 1px solid #e8eaf0;
+        border: 1px solid #d4d4d8;
     }
     
     #MainMenu {visibility: hidden;}
@@ -470,15 +473,15 @@ with tab2:
             font=dict(family='Inter, sans-serif', size=12, color='#697386'),
             hoverlabel=dict(
                 bgcolor='white',
-                bordercolor='#e8eaf0',
+                bordercolor='#d4d4d8',
                 font=dict(color='#1a1f36', size=12, family='Inter'),
             ),
             xaxis=dict(
                 showgrid=False,
                 showline=True,
-                linecolor='#e8eaf0',
+                linecolor='#d4d4d8',
                 ticks='outside',
-                tickcolor='#e8eaf0',
+                tickcolor='#d4d4d8',
                 tickfont=dict(size=12, color='#697386', family='Inter'),
             ),
             yaxis=dict(
