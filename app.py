@@ -22,7 +22,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- CSS: МИНИМАЛИЗМ + АНИМАЦИИ ---
+# --- ЭЛЕГАНТНЫЙ CSS ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -31,9 +31,15 @@ st.markdown("""
         font-family: 'Inter', -apple-system, sans-serif;
     }
     
-    /* Плавное появление всего контента */
+    /* Мягкий фон */
+    .stApp {
+        background: #f7f8fc;
+    }
+    
     .main .block-container {
         animation: fadeIn 0.5s ease-out;
+        padding-top: 2rem;
+        max-width: 1150px;
     }
     
     @keyframes fadeIn {
@@ -42,121 +48,143 @@ st.markdown("""
     }
     
     @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-10px); }
+        from { opacity: 0; transform: translateX(-12px); }
         to { opacity: 1; transform: translateX(0); }
     }
     
     @keyframes scaleIn {
-        from { opacity: 0; transform: scale(0.95); }
+        from { opacity: 0; transform: scale(0.97); }
         to { opacity: 1; transform: scale(1); }
     }
     
     /* Заголовок */
     .main-header {
-        border-bottom: 1px solid #e5e7eb;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
+        background: white;
+        padding: 2rem 2rem;
+        border-radius: 16px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+        margin-bottom: 1.5rem;
         animation: slideIn 0.6s ease-out;
     }
     
     .main-header h1 {
-        font-size: 1.6rem;
+        font-size: 1.75rem;
         font-weight: 700;
-        color: #111827;
+        color: #1a1f36;
         margin: 0;
         letter-spacing: -0.02em;
     }
     
     .main-header p {
-        color: #6b7280;
+        color: #697386;
         font-size: 0.9rem;
-        margin-top: 0.25rem;
+        margin-top: 0.35rem;
     }
     
     /* Заголовки секций */
     .section-title {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
-        color: #374151;
+        color: #1a1f36;
         margin: 1.5rem 0 1rem 0;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #f3f4f6;
+        letter-spacing: -0.01em;
         animation: slideIn 0.5s ease-out;
     }
     
-    /* Карточки статистики с плавным появлением */
+    /* Карточки */
     .stat-box {
-        background: #fafafa;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 1.25rem;
-        text-align: center;
+        background: white;
+        border: 1px solid #e8eaf0;
+        border-radius: 12px;
+        padding: 1.35rem 1.25rem;
+        text-align: left;
         animation: scaleIn 0.5s ease-out;
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
     }
     
     .stat-box:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        border-color: #d1d5db;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(59, 91, 219, 0.08);
+        border-color: #c7d0ff;
     }
     
     .stat-value {
-        font-size: 1.75rem;
+        font-size: 1.85rem;
         font-weight: 700;
-        color: #111827;
+        color: #3b5bdb;
         margin: 0;
         letter-spacing: -0.02em;
     }
     
     .stat-label {
         font-size: 0.78rem;
-        color: #6b7280;
-        margin-top: 0.35rem;
+        color: #697386;
+        margin-top: 0.4rem;
+        font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
+    }
+    
+    /* Акцентная полоска сверху карточки */
+    .stat-box::before {
+        content: '';
+        display: block;
+        width: 32px;
+        height: 3px;
+        background: #3b5bdb;
+        border-radius: 2px;
+        margin-bottom: 0.9rem;
     }
     
     /* Вкладки */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.25rem;
-        border-bottom: 1px solid #e5e7eb;
+        background: white;
+        padding: 0.35rem;
+        border-radius: 10px;
+        border: 1px solid #e8eaf0;
         animation: fadeIn 0.5s ease-out;
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
-        padding: 0.5rem 1rem;
+        border-radius: 7px;
+        padding: 0.5rem 1.1rem;
         font-weight: 500;
-        color: #6b7280;
-        transition: color 0.2s ease;
+        color: #697386;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        color: #111827;
+        color: #3b5bdb;
+        background: #f0f3ff;
     }
     
     .stTabs [aria-selected="true"] {
-        color: #111827 !important;
-        border-bottom: 2px solid #111827 !important;
+        background: #3b5bdb !important;
+        color: white !important;
     }
     
-    /* Кнопки с анимацией */
+    /* Кнопки */
     .stButton > button {
-        background: #111827;
+        background: #3b5bdb;
         color: white;
         border: none;
         border-radius: 8px;
-        padding: 0.5rem 1.25rem;
+        padding: 0.55rem 1.35rem;
         font-weight: 500;
         font-size: 0.9rem;
         transition: all 0.25s ease;
+        box-shadow: 0 1px 2px rgba(59, 91, 219, 0.2);
     }
     
     .stButton > button:hover {
-        background: #374151;
+        background: #2f4bc4;
         transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 16px rgba(59, 91, 219, 0.28);
     }
     
     .stButton > button:active {
@@ -165,15 +193,30 @@ st.markdown("""
     
     /* Поля ввода */
     .stTextInput input,
-    .stSelectbox div[data-baseweb="select"] > div,
-    .stDateInput input {
+    .stDateInput input,
+    .stSelectbox div[data-baseweb="select"] > div {
+        border-radius: 8px !important;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     
     .stTextInput input:focus,
     .stDateInput input:focus {
-        border-color: #111827 !important;
-        box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1) !important;
+        border-color: #3b5bdb !important;
+        box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12) !important;
+    }
+    
+    /* Инфо-блоки */
+    .stAlert {
+        border-radius: 10px;
+        border: 1px solid #e8eaf0;
+    }
+    
+    /* Графики */
+    .stLineChart {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid #e8eaf0;
     }
     
     /* Скрываем меню */
@@ -232,19 +275,19 @@ def get_user_location():
 # --- ЗАГОЛОВОК ---
 st.markdown(f"""
 <div class="main-header">
-    <h1>Школьный Помощник</h1>
+    <h1>🎒 Школьный Помощник</h1>
     <p>{SCHOOL_NAME}</p>
 </div>
 """, unsafe_allow_html=True)
 
 
 # --- ВКЛАДКИ ---
-tab1, tab2, tab3 = st.tabs(["Главная", "Оценки", "Расписание"])
+tab1, tab2, tab3 = st.tabs(["🏠 Главная", "📊 Оценки", "📅 Расписание"])
 
 
 # ============ ВКЛАДКА 1: ГЛАВНАЯ ============
 with tab1:
-    st.markdown('<div class="section-title">Погода</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">☀️ Погода</div>', unsafe_allow_html=True)
     
     weather = get_weather(SCHOOL_LAT, SCHOOL_LON)
     if weather:
@@ -275,11 +318,11 @@ with tab1:
         st.warning("Не удалось загрузить погоду.")
     
     st.write("")
-    st.markdown('<div class="section-title">Дорога до школы</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🗺️ Дорога до школы</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns([4, 1])
     with col2:
-        detect = st.button("Определить", key="btn_detect_location")
+        detect = st.button("📍 Определить", key="btn_detect_location")
     
     if detect:
         with st.spinner("Определяем местоположение..."):
@@ -287,7 +330,7 @@ with tab1:
         st.caption(f"Источник: {user_loc['source']}")
         duration, distance = get_route(user_loc['lat'], user_loc['lon'], SCHOOL_LAT, SCHOOL_LON)
     else:
-        st.caption("Используются координаты дома из настроек. Нажми «Определить» для точной геолокации.")
+        st.caption("Используются координаты дома из настроек. Нажми «📍 Определить» для точной геолокации.")
         duration, distance = get_route(HOME_LAT, HOME_LON, SCHOOL_LAT, SCHOOL_LON)
     
     if duration:
@@ -310,12 +353,12 @@ with tab1:
         st.warning("Не удалось построить маршрут.")
     
     st.write("")
-    st.markdown(f"[Сайт школы]({SCHOOL_URL})")
+    st.markdown(f"🔗 [Сайт школы]({SCHOOL_URL})")
 
 
 # ============ ВКЛАДКА 2: ОЦЕНКИ ============
 with tab2:
-    st.markdown('<div class="section-title">Добавить оценку</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">📝 Добавить оценку</div>', unsafe_allow_html=True)
     
     with st.form("grade_form"):
         col1, col2, col3 = st.columns(3)
@@ -347,7 +390,7 @@ with tab2:
         df['date'] = pd.to_datetime(df['date'])
         
         st.write("")
-        st.markdown('<div class="section-title">Статистика</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">📈 Статистика</div>', unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -368,26 +411,26 @@ with tab2:
             best = df.groupby('subject')['grade'].mean().idxmax()
             st.markdown(f"""
             <div class="stat-box">
-                <p class="stat-value" style="font-size:1.1rem;">{best}</p>
+                <p class="stat-value" style="font-size:1.2rem;">{best}</p>
                 <p class="stat-label">Лучший предмет</p>
             </div>
             """, unsafe_allow_html=True)
         
         st.write("")
-        st.markdown('<div class="section-title">Динамика</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">📉 Динамика</div>', unsafe_allow_html=True)
         pivot = df.pivot_table(index='date', columns='subject', values='grade', aggfunc='mean')
         st.line_chart(pivot)
         
         st.write("")
-        st.markdown('<div class="section-title">Все оценки</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">📋 Все оценки</div>', unsafe_allow_html=True)
         st.dataframe(df.sort_values('date', ascending=False), use_container_width=True)
     else:
-        st.info("Пока нет оценок.")
+        st.info("💡 Пока нет оценок. Добавь первую!")
 
 
 # ============ ВКЛАДКА 3: РАСПИСАНИЕ ============
 with tab3:
-    st.markdown('<div class="section-title">Моё расписание</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">📅 Моё расписание</div>', unsafe_allow_html=True)
     
     days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
     
@@ -414,15 +457,15 @@ with tab3:
             st.success(f"Добавлено: {subject}")
     
     st.write("")
-    st.markdown('<div class="section-title">Текущее расписание</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">📖 Текущее расписание</div>', unsafe_allow_html=True)
     
     for day in days:
         if st.session_state.schedule[day]:
-            with st.expander(f"{day} — {len(st.session_state.schedule[day])} уроков", expanded=(day == selected_day)):
+            with st.expander(f"**{day}** — {len(st.session_state.schedule[day])} уроков", expanded=(day == selected_day)):
                 for i, lesson in enumerate(st.session_state.schedule[day], 1):
-                    st.write(f"{i}. {lesson['time']} — {lesson['subject']} (каб. {lesson['room']})")
+                    st.write(f"**{i}.** 🕐 `{lesson['time']}` — **{lesson['subject']}** (каб. {lesson['room']})")
         else:
-            st.write(f"{day} — нет уроков")
+            st.write(f"📭 **{day}** — нет уроков")
 
 
 # --- ФУТЕР ---
