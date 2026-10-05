@@ -5,6 +5,7 @@ import streamlit as st
 import requests
 import datetime
 import pandas as pd
+import plotly.graph_objects as go
 
 # --- НАСТРОЙКИ ---
 SCHOOL_NAME = "РЖД Лицей № 14, г. Иркутск"
@@ -31,7 +32,6 @@ st.markdown("""
         font-family: 'Inter', -apple-system, sans-serif;
     }
     
-    /* Мягкий фон */
     .stApp {
         background: #f7f8fc;
     }
@@ -57,7 +57,6 @@ st.markdown("""
         to { opacity: 1; transform: scale(1); }
     }
     
-    /* Заголовок */
     .main-header {
         background: white;
         padding: 2rem 2rem;
@@ -82,7 +81,6 @@ st.markdown("""
         margin-top: 0.35rem;
     }
     
-    /* Заголовки секций */
     .section-title {
         font-size: 0.95rem;
         font-weight: 600;
@@ -92,7 +90,6 @@ st.markdown("""
         animation: slideIn 0.5s ease-out;
     }
     
-    /* Карточки */
     .stat-box {
         background: white;
         border: 1px solid #e8eaf0;
@@ -127,7 +124,6 @@ st.markdown("""
         letter-spacing: 0.04em;
     }
     
-    /* Акцентная полоска сверху карточки */
     .stat-box::before {
         content: '';
         display: block;
@@ -138,7 +134,6 @@ st.markdown("""
         margin-bottom: 0.9rem;
     }
     
-    /* Вкладки */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.25rem;
         background: white;
@@ -168,7 +163,6 @@ st.markdown("""
         color: white !important;
     }
     
-    /* Кнопки */
     .stButton > button {
         background: #3b5bdb;
         color: white;
@@ -191,7 +185,6 @@ st.markdown("""
         transform: translateY(0);
     }
     
-    /* Поля ввода */
     .stTextInput input,
     .stDateInput input,
     .stSelectbox div[data-baseweb="select"] > div {
@@ -205,21 +198,11 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12) !important;
     }
     
-    /* Инфо-блоки */
     .stAlert {
         border-radius: 10px;
         border: 1px solid #e8eaf0;
     }
     
-    /* Графики */
-    .stLineChart {
-        background: white;
-        border-radius: 12px;
-        padding: 1rem;
-        border: 1px solid #e8eaf0;
-    }
-    
-    /* Скрываем меню */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 </style>
@@ -419,7 +402,76 @@ with tab2:
         st.write("")
         st.markdown('<div class="section-title">📉 Динамика</div>', unsafe_allow_html=True)
         pivot = df.pivot_table(index='date', columns='subject', values='grade', aggfunc='mean')
-        st.line_chart(pivot)
+        
+        colors = [
+            '#3b5bdb', '#0ea5e9', '#10b981', '#8b5cf6', '#f59e0b',
+            '#ef4444', '#14b8a6', '#ec4899', '#6366f1', '#84cc16',
+        ]
+        
+        fig = go.Figure()
+        
+        for i, subject in enumerate(pivot.columns):
+            fig.add_trace(go.Scatter(
+                x=pivot.index,
+                y=pivot[subject],
+                mode='lines+markers',
+                name=subject,
+                line=dict(
+                    color=colors[i % len(colors)],
+                    width=2.5,
+                    shape='spline',
+                    smoothing=1.0,
+                ),
+                marker=dict(
+                    size=7,
+                    color=colors[i % len(colors)],
+                    line=dict(color='white', width=1.5),
+                ),
+                hovertemplate='<b>%{fullData.name}</b><br>' +
+                              'Дата: %{x|%d.%m.%Y}<br>' +
+                              'Оценка: %{y}<extra></extra>',
+            ))
+        
+        fig.update_layout(
+            height=380,
+            margin=dict(l=10, r=10, t=20, b=10),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
+            font=dict(family='Inter, sans-serif', size=12, color='#697386'),
+            hoverlabel=dict(
+                bgcolor='white',
+                bordercolor='#e8eaf0',
+                font=dict(color='#1a1f36', size=12, family='Inter'),
+            ),
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=1.02,
+                xanchor='left',
+                x=0,
+                bgcolor='rgba(0,0,0,0)',
+                font=dict(size=11, color='#697386'),
+            ),
+            xaxis=dict(
+                showgrid=False,
+                showline=True,
+                linecolor='#e8eaf0',
+                ticks='outside',
+                tickcolor='#e8eaf0',
+                tickfont=dict(size=11, color='#9ca3af'),
+            ),
+            yaxis=dict(
+                showgrid=True,
+                gridcolor='#f3f4f6',
+                gridwidth=1,
+                showline=False,
+                tickfont=dict(size=11, color='#9ca3af'),
+                range=[1.8, 5.2],
+                dtick=1,
+            ),
+        )
+        
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         
         st.write("")
         st.markdown('<div class="section-title">📋 Все оценки</div>', unsafe_allow_html=True)
