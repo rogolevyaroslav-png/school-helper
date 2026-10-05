@@ -23,17 +23,18 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- ЭЛЕГАНТНЫЙ CSS ---
+# --- ЦВЕТНОЙ CSS ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     
     html, body, [class*="css"] {
         font-family: 'Inter', -apple-system, sans-serif;
     }
     
+    /* Мягкий голубой градиентный фон */
     .stApp {
-        background: #ffffff;
+        background: linear-gradient(180deg, #eef2ff 0%, #f5f3ff 50%, #fdf4ff 100%);
     }
     
     .main .block-container {
@@ -57,60 +58,94 @@ st.markdown("""
         to { opacity: 1; transform: scale(1); }
     }
     
+    /* Заголовок с цветным градиентом */
     .main-header {
-        background: white;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
         padding: 2rem 2rem;
         border-radius: 16px;
-        border: 1px solid #d4d4d8;
-        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
         margin-bottom: 1.5rem;
         animation: slideIn 0.6s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
     }
     
     .main-header h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1a1f36;
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: white;
         margin: 0;
         letter-spacing: -0.02em;
+        position: relative;
+        z-index: 1;
     }
     
     .main-header p {
-        color: #697386;
-        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.95rem;
         margin-top: 0.35rem;
+        position: relative;
+        z-index: 1;
     }
     
+    /* Заголовки секций с цветной полоской */
     .section-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #1a1f36;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e1b4b;
         margin: 1.5rem 0 1rem 0;
-        padding-bottom: 0.6rem;
+        padding-left: 0.75rem;
+        border-left: 4px solid #6366f1;
         letter-spacing: -0.01em;
-        border-bottom: 1px solid #eaeaea;
         animation: slideIn 0.5s ease-out;
     }
     
+    /* Карточки — белые, с мягкой тенью и цветной полоской */
     .stat-box {
-        background: #fafafa;
-        border: 1px solid #d4d4d8;
-        border-radius: 8px;
+        background: white;
+        border: 1px solid #e0e7ff;
+        border-radius: 12px;
         padding: 1.5rem 1.25rem;
         text-align: left;
         animation: scaleIn 0.5s ease-out;
-        transition: background 0.25s ease, border-color 0.25s ease;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.06);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+        border-radius: 12px 12px 0 0;
     }
     
     .stat-box:hover {
-        background: #f5f5f5;
-        border-color: #b8b8bd;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15);
+        border-color: #c7d2fe;
     }
     
     .stat-value {
-        font-size: 3.2rem;
-        font-weight: 700;
-        color: #3b5bdb;
+        font-size: 3rem;
+        font-weight: 800;
+        color: #4f46e5;
         margin: 0;
         letter-spacing: -0.03em;
         line-height: 1.1;
@@ -118,93 +153,100 @@ st.markdown("""
     
     .stat-label {
         font-size: 0.78rem;
-        color: #697386;
+        color: #6b7280;
         margin-top: 0.5rem;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
     }
     
-    .stat-box::before {
-        content: '';
-        display: block;
-        width: 28px;
-        height: 2px;
-        background: #d4d4d4;
-        border-radius: 1px;
-        margin-bottom: 0.75rem;
-    }
-    
+    /* Вкладки — цветные */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 0.35rem;
-        background: #f0f2f7;
+        gap: 0.4rem;
+        background: white;
         padding: 0.4rem;
-        border-radius: 10px;
-        border: none;
+        border-radius: 12px;
+        border: 1px solid #e0e7ff;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.06);
         animation: fadeIn 0.5s ease-out;
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
-        border-radius: 7px;
-        padding: 0.55rem 1.2rem;
-        font-weight: 500;
-        color: #4b5563;
+        border-radius: 8px;
+        padding: 0.6rem 1.3rem;
+        font-weight: 600;
+        color: #6b7280;
         font-size: 0.9rem;
-        transition: all 0.2s ease;
+        transition: all 0.25s ease;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        color: #3b5bdb;
-        background: #e8ecff;
+        color: #4f46e5;
+        background: #eef2ff;
     }
     
     .stTabs [aria-selected="true"] {
-        background: #3b5bdb !important;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
         color: white !important;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
     }
     
+    /* Кнопки — градиентные */
     .stButton > button {
-        background: #3b5bdb;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: white;
         border: none;
-        border-radius: 8px;
-        padding: 0.6rem 1.4rem;
+        border-radius: 10px;
+        padding: 0.6rem 1.5rem;
         font-weight: 600;
         font-size: 0.9rem;
         transition: all 0.25s ease;
-        box-shadow: 0 2px 6px rgba(59, 91, 219, 0.3);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
     
     .stButton > button:hover {
-        background: #2f4bc4;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(59, 91, 219, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
     }
     
     .stButton > button:active {
         transform: translateY(0);
     }
     
+    /* Поля ввода */
     .stTextInput input,
     .stDateInput input,
     .stSelectbox div[data-baseweb="select"] > div {
-        border-radius: 8px !important;
-        border: 1px solid #d4d4d8 !important;
+        border-radius: 10px !important;
+        border: 1px solid #d1d5db !important;
+        background: white !important;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     
     .stTextInput input:focus,
     .stDateInput input:focus {
-        border-color: #3b5bdb !important;
-        box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12) !important;
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
     }
     
+    /* Инфо-блоки */
     .stAlert {
         border-radius: 10px;
-        border: 1px solid #d4d4d8;
+        border: 1px solid #e0e7ff;
+        background: white;
     }
     
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e0e7ff;
+        font-weight: 600;
+        color: #1e1b4b;
+    }
+    
+    /* Скрываем меню */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 </style>
@@ -432,10 +474,10 @@ with tab2:
             """, unsafe_allow_html=True)
         
         quarter_colors = {
-            '1 четверть': '#3b5bdb',
+            '1 четверть': '#6366f1',
             '2 четверть': '#0ea5e9',
             '3 четверть': '#10b981',
-            '4 четверть': '#8b5cf6',
+            '4 четверть': '#a855f7',
         }
         
         fig = go.Figure()
@@ -444,12 +486,12 @@ with tab2:
             x=avg_by_quarter.index,
             y=avg_by_quarter.values,
             marker=dict(
-                color=[quarter_colors.get(q, '#3b5bdb') for q in avg_by_quarter.index],
-                line=dict(color='white', width=1),
+                color=[quarter_colors.get(q, '#6366f1') for q in avg_by_quarter.index],
+                line=dict(color='white', width=2),
             ),
             text=[f"{v:.2f}" for v in avg_by_quarter.values],
             textposition='outside',
-            textfont=dict(size=13, color='#1a1f36', family='Inter'),
+            textfont=dict(size=14, color='#1e1b4b', family='Inter'),
             hovertemplate='<b>%{x}</b><br>Средний балл: %{y:.2f}<extra></extra>',
             width=0.5,
         ))
@@ -470,19 +512,19 @@ with tab2:
             paper_bgcolor='white',
             plot_bgcolor='white',
             showlegend=False,
-            font=dict(family='Inter, sans-serif', size=12, color='#697386'),
+            font=dict(family='Inter, sans-serif', size=12, color='#6b7280'),
             hoverlabel=dict(
                 bgcolor='white',
-                bordercolor='#d4d4d8',
-                font=dict(color='#1a1f36', size=12, family='Inter'),
+                bordercolor='#e0e7ff',
+                font=dict(color='#1e1b4b', size=12, family='Inter'),
             ),
             xaxis=dict(
                 showgrid=False,
                 showline=True,
-                linecolor='#d4d4d8',
+                linecolor='#e0e7ff',
                 ticks='outside',
-                tickcolor='#d4d4d8',
-                tickfont=dict(size=12, color='#697386', family='Inter'),
+                tickcolor='#e0e7ff',
+                tickfont=dict(size=12, color='#6b7280', family='Inter'),
             ),
             yaxis=dict(
                 showgrid=True,
