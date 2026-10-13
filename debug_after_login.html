@@ -36,7 +36,7 @@
 	
 	<script type="text/javascript">
 		var appContext = {
-			now: "12.10.2026 18:11:30",
+			now: "13.10.2026 18:04:37",
 			productName: "Сетевой Город. Образование",
 			version: "5.23.69340",
 			serverId: "A440B6DF-2A1D-4CAF-9E43-8445BE086CB1",
@@ -48,17 +48,17 @@
 	</script>
 		
 		<script type="text/javascript">
-			var strATTok = "02853639274254902885068418";
+			var strATTok = "02932639275114650604844407";
 			var bReadonly = false;
 			var kLoginPage = "/";
-			var pageVer = 1791828690;
+			var pageVer = 1791914677;
 			var wasSavedMsg = "";
 		
 		</script>
 		
 	<script type="text/javascript">
 		(function() {
-			appContext.at = "02853639274254902885068418";
+			appContext.at = "02932639275114650604844407";
 			appContext.readOnly = false;
 			appContext.funcType = 2;
 			appContext.language = "RU";
@@ -185,7 +185,7 @@
 		<!--блок правая половина "шапки"-->
 		<div class="block-personal-cabinet">
 			<div class="number-employees-in-system hidden-scr-sm hidden-scr-xs">
-				<p>12 октября 2026 г. - В системе работает <span class="number-employees-span" id="WorkingInSystemCnt">18878</span>
+				<p>13 октября 2026 г. - В системе работает <span class="number-employees-span" id="WorkingInSystemCnt">29002</span>
 					<a href="#" type="button" onclick="UpdateWorkInSystemCnt()" title="Список пользователей в сети">
 						<span class="glyphicon glyphicon-user"></span>
 						<span class="glyphicon glyphicon-user"></span>
@@ -330,7 +330,7 @@
 	
 	<div>
 		<form name="refreshfix" method="post" class="hidden ng-pristine ng-valid">
-			<input type="hidden" name="at" value="02853639274254902885068418" autocomplete="off">
+			<input type="hidden" name="at" value="02932639275114650604844407" autocomplete="off">
 			<input type="hidden" name="baseurl" value="school/main" autocomplete="off">
 			<input type="hidden" name="route" value="/" autocomplete="off">
 			<input type="hidden" name="TabItem" value="0" autocomplete="off">
@@ -387,23 +387,30 @@
 						</div>
 					</div>
 					<div class="img-content"><div class="el-decor"></div></div>
-				</div><div ng-show="$ctrl.isVisible($ctrl.screenElementTypes.announcements)" class="one-one item ads ui-sortable-handle empty_ads_b" id="2" ng-class="{empty_ads_b: !$ctrl.data.announcements.length}">
+				</div><div ng-show="$ctrl.isVisible($ctrl.screenElementTypes.announcements)" class="one-one item ads ui-sortable-handle" id="2" ng-class="{empty_ads_b: !$ctrl.data.announcements.length}">
 					<div class="head header-border-green">
 						<i class="mdi mdi-file-document-box"></i>
 						Объявления
 					</div>
 					<div class="wrap-content foot-active">
 
-						<!-- ngRepeat: announce in $ctrl.data.announcements -->
-
-						<!-- ngIf: !$ctrl.data.announcements.length --><div class="block-content ng-scope" ng-if="!$ctrl.data.announcements.length">
+						<!-- ngRepeat: announce in $ctrl.data.announcements --><!-- ngIf: $ctrl.data.announcements.length --><div class="block-content ng-scope" ng-repeat="announce in $ctrl.data.announcements" ng-if="$ctrl.data.announcements.length">
 							<div class="wrap-img"></div>
-							<div class="anounce_content">
-								<h2>Нет объявлений</h2>
-								<div class="text"></div>
-								<!--<a href="#" class="read-more"> </a>-->
+							<div class="item-content">
+								<h2 class="ng-binding">Школьный этап ВсОШ по ХИМИИ 13 октября 2026</h2>
+								<div class="ng-binding" ng-bind-html="announce.description | trusted"><p>Внимание!</p>
+<p>Напоминаем, что <strong>сегодня 13.10</strong> идёт<span style="color: #0000ff;"><strong> Школьный этап ВсОШ по <span style="color: #ff0000;">ХИМИИ</span> на платформе "Сириус" для 7-11 классов. </strong></span></p>
+<p>Для участия нужно ввести <em><strong>код участника</strong></em>: <strong><a href="https://uts.sirius.online/" target="_blank">https://uts.sirius.online/ </a></strong></p>
+<p>Все коды выданы классным руководителям.</p>
+<p>Время выполнения олимпиады - <strong>120 минут. </strong></p>
+<p>Задания можно выполнять в любое время в течение сегодняшнего дня до 22:00!</p>
+<p>Обращаем ваше внимание на то, что в 22:00 задания закрываются, поэтому участникам нужно начать выполнять олимпиаду не позднее 20:00!</p>
+<p>Дополнительная информация находится на сайте лицея:&nbsp;<strong><a href="http://licey-14.ru/vsosh/index.php?dn=pages&amp;pa=vsosh&amp;cpu=vserossijskaya-olimpiada-shkolnikov" target="_blank">РЖД лицей № 14. Всероссийская олимпиада школьников</a></strong></p></div>
+								<a href="#" class="read-more">Подробнее</a>
 							</div>
-						</div><!-- end ngIf: !$ctrl.data.announcements.length -->
+						</div><!-- end ngIf: $ctrl.data.announcements.length --><!-- end ngRepeat: announce in $ctrl.data.announcements -->
+
+						<!-- ngIf: !$ctrl.data.announcements.length -->
 
 					</div>
 					<div class="wrap-foot">
@@ -704,8 +711,8 @@
 	<form name="MenuForm" method="POST" class="ng-pristine ng-valid">
 		
 	<input type="hidden" name="LoginType" value="0" autocomplete="off">
-	<input type="hidden" name="AT" value="02853639274254902885068418" autocomplete="off">
-	<input type="hidden" name="VER" value="1791828690" autocomplete="off"><input type="hidden" name="MenuItem" value="0" autocomplete="off"><input type="hidden" name="TabItem" value="0" autocomplete="off"><input type="hidden" name="optional" value="optional" autocomplete="off">
+	<input type="hidden" name="AT" value="02932639275114650604844407" autocomplete="off">
+	<input type="hidden" name="VER" value="1791914677" autocomplete="off"><input type="hidden" name="MenuItem" value="0" autocomplete="off"><input type="hidden" name="TabItem" value="0" autocomplete="off"><input type="hidden" name="optional" value="optional" autocomplete="off">
 	</form>
 	<link rel="stylesheet" type="text/css" href="/vendor/eternicode-bootstrap-datepicker/css/datepicker_build.min.css?ver=5.23.69340">
 	<script src="/vendor/eternicode-bootstrap-datepicker/js/bootstrap-datepicker.js?ver=5.23.69340" type="text/javascript"></script>
