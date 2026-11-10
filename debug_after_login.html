@@ -36,7 +36,7 @@
 	
 	<script type="text/javascript">
 		var appContext = {
-			now: "09.11.2026 18:53:20",
+			now: "10.11.2026 18:45:08",
 			productName: "Сетевой Город. Образование",
 			version: "5.23.69340",
 			serverId: "A440B6DF-2A1D-4CAF-9E43-8445BE086CB1",
@@ -48,17 +48,17 @@
 	</script>
 		
 		<script type="text/javascript">
-			var strATTok = "02498639298471873192898117";
+			var strATTok = "02275639299330953944816257";
 			var bReadonly = false;
 			var kLoginPage = "/";
-			var pageVer = 1794250400;
+			var pageVer = 1794336308;
 			var wasSavedMsg = "";
 		
 		</script>
 		
 	<script type="text/javascript">
 		(function() {
-			appContext.at = "02498639298471873192898117";
+			appContext.at = "02275639299330953944816257";
 			appContext.readOnly = false;
 			appContext.funcType = 2;
 			appContext.language = "RU";
@@ -185,7 +185,7 @@
 		<!--блок правая половина "шапки"-->
 		<div class="block-personal-cabinet">
 			<div class="number-employees-in-system hidden-scr-sm hidden-scr-xs">
-				<p>9 ноября 2026 г. - В системе работает <span class="number-employees-span" id="WorkingInSystemCnt">20878</span>
+				<p>10 ноября 2026 г. - В системе работает <span class="number-employees-span" id="WorkingInSystemCnt">30582</span>
 					<a href="#" type="button" onclick="UpdateWorkInSystemCnt()" title="Список пользователей в сети">
 						<span class="glyphicon glyphicon-user"></span>
 						<span class="glyphicon glyphicon-user"></span>
@@ -330,7 +330,7 @@
 	
 	<div>
 		<form name="refreshfix" method="post" class="hidden ng-pristine ng-valid">
-			<input type="hidden" name="at" value="02498639298471873192898117" autocomplete="off">
+			<input type="hidden" name="at" value="02275639299330953944816257" autocomplete="off">
 			<input type="hidden" name="baseurl" value="school/main" autocomplete="off">
 			<input type="hidden" name="route" value="/" autocomplete="off">
 			<input type="hidden" name="TabItem" value="0" autocomplete="off">
@@ -387,23 +387,32 @@
 						</div>
 					</div>
 					<div class="img-content"><div class="el-decor"></div></div>
-				</div><div ng-show="$ctrl.isVisible($ctrl.screenElementTypes.announcements)" class="one-one item ads ui-sortable-handle empty_ads_b" id="2" ng-class="{empty_ads_b: !$ctrl.data.announcements.length}">
+				</div><div ng-show="$ctrl.isVisible($ctrl.screenElementTypes.announcements)" class="one-one item ads ui-sortable-handle" id="2" ng-class="{empty_ads_b: !$ctrl.data.announcements.length}">
 					<div class="head header-border-green">
 						<i class="mdi mdi-file-document-box"></i>
 						Объявления
 					</div>
 					<div class="wrap-content foot-active">
 
-						<!-- ngRepeat: announce in $ctrl.data.announcements -->
-
-						<!-- ngIf: !$ctrl.data.announcements.length --><div class="block-content ng-scope" ng-if="!$ctrl.data.announcements.length">
+						<!-- ngRepeat: announce in $ctrl.data.announcements --><!-- ngIf: $ctrl.data.announcements.length --><div class="block-content ng-scope" ng-repeat="announce in $ctrl.data.announcements" ng-if="$ctrl.data.announcements.length">
 							<div class="wrap-img"></div>
-							<div class="anounce_content">
-								<h2>Нет объявлений</h2>
-								<div class="text"></div>
-								<!--<a href="#" class="read-more"> </a>-->
+							<div class="item-content">
+								<h2 class="ng-binding">Открыт набор в Зимнюю Байкальскую физико-математическую школу 2027</h2>
+								<div class="ng-binding" ng-bind-html="announce.description | trusted"><p><strong>Дорогие ребята 4-11 классов! Уважаемые родители!</strong><br><br>РЖД лицей № 14 приглашает принять участие в <strong><span style="color: #0000ff; background-color: #ccffff;">Зимней Байкальской физико-математической школе&nbsp;со 2 по 6 января 2027 года в г.Слюдянка!&nbsp;</span></strong></p>
+<p>Зимняя БФМШ — это идеальный способ провести каникулы с пользой. Вместо однообразных выходных вас ждут:</p>
+<p>?? увлекательные занятия по математике от ведущих педагогов Иркутска, воспитавших победителей олимпиад и стобалльников;<br>?? интеллектуальные бои: турнир математических боёв станет вторым этапом Байкальского межрегионального турнира (включён в перечень Минпросвещения под № 6.163 на 2026/27 год, уровень 2);<br>?? тёплая атмосфера: прогулки по берегу Байкала, вечерние мероприятия и общение с единомышленниками;<br>?? комфорт: проживание в 3–4-местных номерах и пятиразовое питание.<br><br>Кто может участвовать:</p>
+<p>??ученики 4–8 классов, влюблённые в математику;<br>??старшеклассники (9–11 классы), которые готовятся покорить региональный этап ВсОШ.</p>
+<p>Организационные детали:</p>
+<p>Стоимость участия 14 000 рублей. В сумму включены проезд, проживание, питание, обучение, досуг.</p>
+<p><strong>Заявки</strong> принимаются <span style="color: #ff0000;"><strong>до 10 декабря 2026 года</strong></span>: <strong><a href="https://forms.yandex.ru/u/6af27cdf6f1ca42ae5bfe7a1" target="_blank"><span style="color: #0000ff;"><em>https://forms.yandex.ru/u/6af27cdf6f1ca42ae5bfe7a1</em></span></a></strong></p>
+<p><strong>Родительское собрание (онлайн):</strong> <span style="color: #ff0000;"><strong>15 декабря 2026 г. в 17:30.</strong></span>&nbsp; Ссылка: <a href="https://my.mts-link.ru/j/96997237/28045998416" target="_blank"><strong><span style="color: #0000ff;"><em>https://my.mts-link.ru/j/96997237/28045998416</em></span></strong></a></p>
+<p>Места ограничены!</p>
+<p>Контакты для связи: тел. 63-29-20 доб. 114, каб. 77</p></div>
+								<a href="#" class="read-more">Подробнее</a>
 							</div>
-						</div><!-- end ngIf: !$ctrl.data.announcements.length -->
+						</div><!-- end ngIf: $ctrl.data.announcements.length --><!-- end ngRepeat: announce in $ctrl.data.announcements -->
+
+						<!-- ngIf: !$ctrl.data.announcements.length -->
 
 					</div>
 					<div class="wrap-foot">
@@ -704,8 +713,8 @@
 	<form name="MenuForm" method="POST" class="ng-pristine ng-valid">
 		
 	<input type="hidden" name="LoginType" value="0" autocomplete="off">
-	<input type="hidden" name="AT" value="02498639298471873192898117" autocomplete="off">
-	<input type="hidden" name="VER" value="1794250400" autocomplete="off"><input type="hidden" name="MenuItem" value="0" autocomplete="off"><input type="hidden" name="TabItem" value="0" autocomplete="off"><input type="hidden" name="optional" value="optional" autocomplete="off">
+	<input type="hidden" name="AT" value="02275639299330953944816257" autocomplete="off">
+	<input type="hidden" name="VER" value="1794336308" autocomplete="off"><input type="hidden" name="MenuItem" value="0" autocomplete="off"><input type="hidden" name="TabItem" value="0" autocomplete="off"><input type="hidden" name="optional" value="optional" autocomplete="off">
 	</form>
 	<link rel="stylesheet" type="text/css" href="/vendor/eternicode-bootstrap-datepicker/css/datepicker_build.min.css?ver=5.23.69340">
 	<script src="/vendor/eternicode-bootstrap-datepicker/js/bootstrap-datepicker.js?ver=5.23.69340" type="text/javascript"></script>
